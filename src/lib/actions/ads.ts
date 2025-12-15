@@ -292,7 +292,17 @@ export async function uploadAdImage(formData: FormData): Promise<ActionResult<st
 
         if (error) {
             console.error('Error uploading image:', error);
-            return { success: false, error: 'Error al subir imagen' };
+
+            // Detectar error de permisos/RLS
+            const err = error as any;
+            if (err.statusCode === '403' || err.message.includes('row-level security policy')) {
+                return {
+                    success: false,
+                    error: 'Error de permisos: No se ejecutó el script de configuración de Storage en Supabase.'
+                };
+            }
+
+            return { success: false, error: `Error técnico: ${error.message}` };
         }
 
         // Get public URL
