@@ -1,6 +1,6 @@
 /**
  * Miramar Experience - Database Types
- * Based on Supabase Schema from PRD
+ * Based on Supabase Schema v2.0 with Geolocation
  */
 
 // Ad Tier Enum
@@ -9,32 +9,58 @@ export type AdTier = 'hero' | 'featured' | 'standard';
 // Ad Category Enum
 export type AdCategory = 'gastronomia' | 'hoteleria' | 'shopping' | 'aventura' | 'nocturna';
 
-// Main Ad Type
+// Main Ad Type (also represents a Place)
 export interface Ad {
     id: string;
     created_at: string;
+
+    // Business Info
     business_name: string;
     description: string | null;
+    long_description: string | null;
+
+    // Media
     image_url: string;
+    gallery_urls: string[];
+
+    // Contact & Links
     redirect_url: string | null;
+
+    // Classification
     tier: AdTier;
     category: AdCategory;
     priority: number;
+
+    // Geolocation
+    lat: number | null;
+    lng: number | null;
+    address: string | null;
+    show_on_map: boolean;
+
+    // Timing & Status
     expiration_date: string;
     is_active: boolean;
+    is_permanent: boolean;
 }
 
 // For creating a new Ad
 export interface CreateAdInput {
     business_name: string;
     description?: string | null;
+    long_description?: string | null;
     image_url: string;
+    gallery_urls?: string[];
     redirect_url?: string | null;
     tier: AdTier;
     category: AdCategory;
     priority?: number;
+    lat?: number | null;
+    lng?: number | null;
+    address?: string | null;
+    show_on_map?: boolean;
     expiration_date: string;
     is_active?: boolean;
+    is_permanent?: boolean;
 }
 
 // For updating an Ad

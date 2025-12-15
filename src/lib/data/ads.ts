@@ -179,3 +179,39 @@ export async function getAdsByCategory(category: string): Promise<Ad[]> {
         return [];
     }
 }
+
+/**
+ * Get all places with geolocation for the map
+ * Includes active ads AND permanent places
+ */
+export async function getPlacesForMap(): Promise<Ad[]> {
+    if (!isSupabaseConfigured()) {
+        console.warn('⚠️ Supabase not configured - returning empty map places');
+        return [];
+    }
+
+    try {
+        const supabase = await createServerSupabaseClient();
+
+        const { data, error } = await supabase
+            .from('ads')
+            .select('*')
+            .eq('is_active', true)
+            .eq('show_on_map', true)
+            .not('lat', 'is', null)
+            .not('lng', 'is', null)
+            .or(`expiration_date.gt.${new Date().toISOString()},is_permanent.eq.true`)
+            .order('tier', { ascending: true })
+            .order('priority', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching map places:', error);
+            return [];
+        }
+
+        return data as Ad[];
+    } catch (error) {
+        console.error('Error in getPlacesForMap:', error);
+        return [];
+    }
+}

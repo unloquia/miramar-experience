@@ -29,6 +29,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { createAd, updateAd, uploadAdImage } from '@/lib/actions/ads';
 import { tierInfo, categoryInfo, type CreateAdFormData } from '@/lib/schemas';
+import { LocationPicker } from './LocationPicker';
+import { Switch } from '@/components/ui/switch';
 import type { Ad, AdTier, AdCategory } from '@/types/database';
 
 interface AdFormProps {
@@ -49,6 +51,14 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
         initialData?.expiration_date ? new Date(initialData.expiration_date) : undefined
     );
     const [priority, setPriority] = useState(initialData?.priority || 0);
+    const [longDescription, setLongDescription] = useState(initialData?.long_description || '');
+
+    // Geolocation state
+    const [lat, setLat] = useState<number | null>(initialData?.lat || null);
+    const [lng, setLng] = useState<number | null>(initialData?.lng || null);
+    const [address, setAddress] = useState(initialData?.address || '');
+    const [showOnMap, setShowOnMap] = useState(initialData?.show_on_map ?? true);
+    const [isPermanent, setIsPermanent] = useState(initialData?.is_permanent || false);
 
     // Image state
     const [imageUrl, setImageUrl] = useState(initialData?.image_url || '');
@@ -149,13 +159,19 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
         const formData = {
             business_name: businessName.trim(),
             description: description.trim() || null,
+            long_description: longDescription.trim() || null,
             image_url: finalImageUrl,
             redirect_url: redirectUrl.trim() || null,
             tier,
             category: category as AdCategory,
             priority,
+            lat,
+            lng,
+            address: address.trim() || null,
+            show_on_map: showOnMap,
             expiration_date: expirationDate.toISOString(),
             is_active: initialData?.is_active ?? true,
+            is_permanent: isPermanent,
         };
 
         // Create or Update ad
@@ -247,7 +263,7 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
 
                     <div className="space-y-2">
                         <Label htmlFor="description">
-                            Descripción <span className="text-muted-foreground">(máx. 140 caracteres)</span>
+                            Descripción Corta <span className="text-muted-foreground">(máx. 140 caracteres, para tarjetas)</span>
                         </Label>
                         <Textarea
                             id="description"
@@ -263,17 +279,84 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
                     </div>
 
                     <div className="space-y-2">
+                        <Label htmlFor="longDescription">
+                            Descripción Larga <span className="text-muted-foreground">(para página de detalle)</span>
+                        </Label>
+                        <Textarea
+                            id="longDescription"
+                            placeholder="Descripción completa del negocio para la página de detalle..."
+                            value={longDescription}
+                            onChange={(e) => setLongDescription(e.target.value)}
+                            rows={4}
+                            className="resize-none"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
                         <Label htmlFor="redirectUrl">URL de Redirección (WhatsApp o Web)</Label>
                         <Input
                             id="redirectUrl"
-                            type="url"
-                            placeholder="https://... o https://wa.me/..."
+                            placeholder="2261234567 o https://..."
                             value={redirectUrl}
                             onChange={(e) => setRedirectUrl(e.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            💡 Podés poner solo el número de teléfono y se convierte automáticamente a WhatsApp
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Location */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Ubicación</CardTitle>
+                    <CardDescription>
+                        Agregá la ubicación para que aparezca en el mapa interactivo
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <LocationPicker
+                        initialLat={lat}
+                        initialLng={lng}
+                        initialAddress={address}
+                        onLocationChange={({ lat: newLat, lng: newLng, address: newAddress }) => {
+                            setLat(newLat);
+                            setLng(newLng);
+                            if (newAddress !== null) setAddress(newAddress);
+                        }}
+                    />
+
+                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                        <div>
+                            <Label htmlFor="showOnMap">Mostrar en el mapa</Label>
+                            <p className="text-xs text-muted-foreground">
+                                Si está activo, aparece en el mapa de la landing
+                            </p>
+                        </div>
+                        <Switch
+                            id="showOnMap"
+                            checked={showOnMap}
+                            onCheckedChange={setShowOnMap}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                        <div>
+                            <Label htmlFor="isPermanent">Lugar permanente</Label>
+                            <p className="text-xs text-muted-foreground">
+                                Si está activo, nunca vence (ideal para guía de comercios)
+                            </p>
+                        </div>
+                        <Switch
+                            id="isPermanent"
+                            checked={isPermanent}
+                            onCheckedChange={setIsPermanent}
                         />
                     </div>
                 </CardContent>
             </Card>
+
 
             {/* Tier Selection */}
             <Card>

@@ -5,3 +5,5 @@ export { AdCard, CTACard } from './AdCard';
 export { Navbar } from './Navbar';
 export { Footer } from './Footer';
 export { MapSection } from './MapSection';
+export { MapSectionClient } from './MapSectionClient';
+export { MapView } from './MapView';
