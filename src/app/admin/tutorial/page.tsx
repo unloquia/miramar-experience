@@ -139,11 +139,12 @@ export default function TutorialPage() {
                                 2
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-semibold">Información del Negocio</h4>
+                                <h4 className="font-semibold">Información y Descripción</h4>
                                 <ul className="text-sm text-muted-foreground mt-1 space-y-1">
                                     <li>• <strong>Nombre:</strong> Nombre comercial (ej: "Hotel Miramar")</li>
-                                    <li>• <strong>Descripción:</strong> Breve texto atractivo, máximo 140 caracteres</li>
-                                    <li>• <strong>URL:</strong> Link de WhatsApp o sitio web (opcional)</li>
+                                    <li>• <strong>Descripción Corta:</strong> Texto breve para la tarjeta en la lista (máx 140 cars).</li>
+                                    <li>• <strong>Descripción Larga:</strong> Texto completo para la página de detalle del comercio. Acá podés contar toda la historia, servicios, menú, etc.</li>
+                                    <li>• <strong>URL:</strong> Link de WhatsApp o sitio web.</li>
                                 </ul>
                                 <div className="mt-2 p-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg">
                                     <p className="text-sm text-green-800 dark:text-green-200">
@@ -157,6 +158,33 @@ export default function TutorialPage() {
                         <div className="flex gap-4">
                             <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
                                 3
+                            </div>
+                            <div className="flex-1">
+                                <h4 className="font-semibold">Ubicación en el Mapa 🗺️</h4>
+                                <p className="text-sm text-muted-foreground mt-1 mb-2">
+                                    Es fundamental para que los turistas encuentren el local.
+                                </p>
+                                <ul className="text-sm text-muted-foreground space-y-2">
+                                    <li className="flex gap-2">
+                                        <span className="text-primary">📍</span>
+                                        <span><strong>Seleccionar:</strong> Hacé clic en el mapa para poner el pin exacto o usá el buscador de direcciones.</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="text-primary">👁️</span>
+                                        <span><strong>Mostrar en mapa:</strong> Activá este switch para que aparezca en el mapa interactivo de la home.</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="text-primary">♾️</span>
+                                        <span><strong>Lugar Permanente:</strong> Activá esto si querés que el lugar aparezca en el mapa <strong>para siempre</strong>, aunque no tenga publicidad activa. Ideal para la guía base de comercios.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Step 4 */}
+                        <div className="flex gap-4">
+                            <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
+                                4
                             </div>
                             <div className="flex-1">
                                 <h4 className="font-semibold">Elegir Nivel (Tier)</h4>
@@ -180,17 +208,16 @@ export default function TutorialPage() {
                             </div>
                         </div>
 
-                        {/* Step 4 */}
+                        {/* Step 5 */}
                         <div className="flex gap-4">
                             <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                                4
+                                5
                             </div>
                             <div className="flex-1">
                                 <h4 className="font-semibold">Categoría y Vencimiento</h4>
                                 <ul className="text-sm text-muted-foreground mt-1 space-y-1">
                                     <li>• <strong>Categoría:</strong> Gastronomía, Hotelería, Shopping, Aventura, Vida Nocturna</li>
                                     <li>• <strong>Fecha de Vencimiento:</strong> Hasta cuándo estará visible el anuncio</li>
-                                    <li>• <strong>Prioridad:</strong> Orden dentro de su nivel (0-100, mayor = primero)</li>
                                 </ul>
                             </div>
                         </div>
