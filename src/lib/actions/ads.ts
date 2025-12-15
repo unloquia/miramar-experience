@@ -16,6 +16,46 @@ type ActionResult<T = void> =
     | { success: false; error: string };
 
 /**
+ * Auto-format WhatsApp URLs
+ * Converts phone numbers to wa.me links
+ */
+function formatWhatsAppUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+
+    // If it's just a number (10-15 digits), convert to WhatsApp URL
+    const cleanNumber = url.replace(/[\s\-\(\)]/g, '');
+    if (/^\d{10,15}$/.test(cleanNumber)) {
+        // Add Argentina country code if not present
+        const fullNumber = cleanNumber.startsWith('549') ? cleanNumber : `549${cleanNumber}`;
+        return `https://wa.me/${fullNumber}`;
+    }
+
+    // If it's a wa.me URL without https, add it
+    if (url.startsWith('wa.me/')) {
+        return `https://${url}`;
+    }
+
+    return url;
+}
+
+/**
+ * Count active hero ads
+ */
+async function countActiveHeroAds(supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>): Promise<number> {
+    const { count, error } = await supabase
+        .from('ads')
+        .select('*', { count: 'exact', head: true })
+        .eq('tier', 'hero')
+        .eq('is_active', true)
+        .gt('expiration_date', new Date().toISOString());
+
+    if (error) return 0;
+    return count || 0;
+}
+
+const MAX_HERO_ADS = 5;
+
+/**
  * Create a new ad
  * CRITICAL: Calls revalidatePath after mutation
  */
@@ -32,6 +72,20 @@ export async function createAd(formData: CreateAdFormData): Promise<ActionResult
             return { success: false, error: 'No autorizado' };
         }
 
+        // Check hero ads limit
+        if (validatedData.tier === 'hero') {
+            const heroCount = await countActiveHeroAds(supabase);
+            if (heroCount >= MAX_HERO_ADS) {
+                return {
+                    success: false,
+                    error: `Ya tienes ${MAX_HERO_ADS} ads Hero activos. Desactiva uno o usa Featured.`
+                };
+            }
+        }
+
+        // Auto-format WhatsApp URL
+        const redirectUrl = formatWhatsAppUrl(validatedData.redirect_url);
+
         // Insert ad
         const { data, error } = await supabase
             .from('ads')
@@ -39,7 +93,7 @@ export async function createAd(formData: CreateAdFormData): Promise<ActionResult
                 business_name: validatedData.business_name,
                 description: validatedData.description || null,
                 image_url: validatedData.image_url,
-                redirect_url: validatedData.redirect_url || null,
+                redirect_url: redirectUrl,
                 tier: validatedData.tier,
                 category: validatedData.category,
                 priority: validatedData.priority || 0,
@@ -88,7 +142,7 @@ export async function updateAd(formData: UpdateAdFormData): Promise<ActionResult
         if (validatedData.business_name !== undefined) updateData.business_name = validatedData.business_name;
         if (validatedData.description !== undefined) updateData.description = validatedData.description;
         if (validatedData.image_url !== undefined) updateData.image_url = validatedData.image_url;
-        if (validatedData.redirect_url !== undefined) updateData.redirect_url = validatedData.redirect_url;
+        if (validatedData.redirect_url !== undefined) updateData.redirect_url = formatWhatsAppUrl(validatedData.redirect_url);
         if (validatedData.tier !== undefined) updateData.tier = validatedData.tier;
         if (validatedData.category !== undefined) updateData.category = validatedData.category;
         if (validatedData.priority !== undefined) updateData.priority = validatedData.priority;

@@ -33,7 +33,8 @@ export async function getHeroAds(): Promise<Ad[]> {
             .eq('tier', 'hero')
             .eq('is_active', true)
             .gt('expiration_date', new Date().toISOString())
-            .order('priority', { ascending: false });
+            .order('priority', { ascending: false })
+            .limit(5); // Máximo 5 hero ads para evitar carousel infinito
 
         if (error) {
             console.error('Error fetching hero ads:', error);
