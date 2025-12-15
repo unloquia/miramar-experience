@@ -30,11 +30,9 @@ const withTimeout = <T>(promise: PromiseLike<T>, ms: number = 5000): Promise<T> 
 export async function getHeroAds(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
-    try {
+    const fetchHeroAds = async (): Promise<Ad[]> => {
         const supabase = await createServerSupabaseClient();
-
-        // Optimized query: select specific fields only
-        const query = supabase
+        const { data, error } = await supabase
             .from('ads')
             .select('id, business_name, description, image_url, redirect_url, tier')
             .eq('tier', 'hero')
@@ -43,14 +41,15 @@ export async function getHeroAds(): Promise<Ad[]> {
             .order('priority', { ascending: false })
             .limit(5);
 
-        const { data, error } = await withTimeout(query, 5000); // 5s timeout
-
         if (error) {
             console.error('Error fetching hero ads:', error);
             return [];
         }
-
         return data as Ad[];
+    };
+
+    try {
+        return await withTimeout(fetchHeroAds(), 5000);
     } catch (error) {
         console.error('Error/Timeout in getHeroAds:', error);
         return [];
@@ -65,11 +64,9 @@ export async function getHeroAds(): Promise<Ad[]> {
 export async function getGridAds(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
-    try {
+    const fetchGridAds = async (): Promise<Ad[]> => {
         const supabase = await createServerSupabaseClient();
-
-        // Optimized query: minimal fields for grid
-        const query = supabase
+        const { data, error } = await supabase
             .from('ads')
             .select('id, business_name, description, image_url, tier, category, redirect_url')
             .in('tier', ['featured', 'standard'])
@@ -78,14 +75,15 @@ export async function getGridAds(): Promise<Ad[]> {
             .order('tier', { ascending: true })
             .order('priority', { ascending: false });
 
-        const { data, error } = await withTimeout(query, 6000); // 6s timeout
-
         if (error) {
             console.error('Error fetching grid ads:', error);
             return [];
         }
-
         return data as Ad[];
+    };
+
+    try {
+        return await withTimeout(fetchGridAds(), 6000);
     } catch (error) {
         console.error('Error/Timeout in getGridAds:', error);
         return [];
@@ -195,11 +193,9 @@ export async function getAdsByCategory(category: string): Promise<Ad[]> {
 export async function getPlacesForMap(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
-    try {
+    const fetchPlaces = async (): Promise<Ad[]> => {
         const supabase = await createServerSupabaseClient();
-
-        // Optimized query: only essential fields for map pins
-        const query = supabase
+        const { data, error } = await supabase
             .from('ads')
             .select('id, business_name, lat, lng, category, image_url, address, tier')
             .eq('is_active', true)
@@ -208,16 +204,17 @@ export async function getPlacesForMap(): Promise<Ad[]> {
             .not('lng', 'is', null)
             .or(`expiration_date.gt.${new Date().toISOString()},is_permanent.eq.true`)
             .order('tier', { ascending: true })
-            .limit(100); // Safety limit
-
-        const { data, error } = await withTimeout(query, 5000);
+            .limit(100);
 
         if (error) {
             console.error('Error fetching map places:', error);
             return [];
         }
-
         return data as Ad[];
+    };
+
+    try {
+        return await withTimeout(fetchPlaces(), 5000);
     } catch (error) {
         console.error('Error/Timeout in getPlacesForMap:', error);
         return [];
