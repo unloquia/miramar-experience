@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, ExternalLink, MessageCircle, Share2 } from 'lucide-react';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 // Dynamic metadata
 export async function generateMetadata({
     params

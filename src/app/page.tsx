@@ -6,6 +6,8 @@
 import { HeroCarousel, BentoGrid, BentoGridEmpty, Navbar, Footer, MapSection } from '@/components/landing';
 import { getHeroAds, getGridAds } from '@/lib/data/ads';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   // Fetch ads server-side (with expiration filter)
   const [heroAds, gridAds] = await Promise.all([

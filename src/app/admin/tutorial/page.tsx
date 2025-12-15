@@ -23,6 +23,8 @@ import {
     ArrowRight
 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function TutorialPage() {
     return (
         <div className="space-y-8 max-w-4xl">

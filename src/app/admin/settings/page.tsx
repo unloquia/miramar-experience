@@ -1,7 +1,9 @@
 /**
  * Admin Settings Page
- * Placeholder for future settings
+ * Placeholder for future configuration
  */
+
+export const dynamic = 'force-dynamic';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Construction } from 'lucide-react';
