@@ -5,6 +5,9 @@
 
 import { notFound } from 'next/navigation';
 import { getAdById } from '@/lib/data/ads';
+
+export const dynamic = 'force-dynamic';
+
 import { AdForm } from '@/components/admin/AdForm';
 
 interface EditAdPageProps {

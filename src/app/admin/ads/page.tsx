@@ -5,6 +5,9 @@
 
 import Link from 'next/link';
 import { getAllAdsForAdmin } from '@/lib/data/ads';
+
+export const dynamic = 'force-dynamic';
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
