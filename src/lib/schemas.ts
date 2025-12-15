@@ -35,14 +35,25 @@ export const createAdSchema = z.object({
 
     redirect_url: z
         .string()
-        .url('URL de redirección inválida')
         .optional()
         .nullable()
-        .or(z.literal('')),
+        .or(z.literal('')), // Relaxed validation to allow phone numbers (auto-formatted on server)
 
     tier: adTierSchema,
 
     category: adCategorySchema,
+
+    long_description: z.string().optional().nullable(),
+
+    // Geolocation
+    lat: z.number().nullable().optional(),
+    lng: z.number().nullable().optional(),
+    address: z.string().nullable().optional(),
+    show_on_map: z.boolean().default(true),
+    is_permanent: z.boolean().default(false),
+
+    // Gallery
+    gallery_urls: z.array(z.string()).optional().default([]),
 
     priority: z
         .number()

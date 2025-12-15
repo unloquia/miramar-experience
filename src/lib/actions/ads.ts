@@ -92,11 +92,20 @@ export async function createAd(formData: CreateAdFormData): Promise<ActionResult
             .insert({
                 business_name: validatedData.business_name,
                 description: validatedData.description || null,
+                long_description: validatedData.long_description || null,
                 image_url: validatedData.image_url,
+                gallery_urls: validatedData.gallery_urls || [],
                 redirect_url: redirectUrl,
                 tier: validatedData.tier,
                 category: validatedData.category,
                 priority: validatedData.priority || 0,
+                // Geolocation
+                lat: validatedData.lat,
+                lng: validatedData.lng,
+                address: validatedData.address,
+                show_on_map: validatedData.show_on_map,
+                is_permanent: validatedData.is_permanent,
+
                 expiration_date: validatedData.expiration_date,
                 is_active: validatedData.is_active ?? true,
             })
@@ -141,11 +150,21 @@ export async function updateAd(formData: UpdateAdFormData): Promise<ActionResult
         const updateData: Record<string, unknown> = {};
         if (validatedData.business_name !== undefined) updateData.business_name = validatedData.business_name;
         if (validatedData.description !== undefined) updateData.description = validatedData.description;
+        if (validatedData.long_description !== undefined) updateData.long_description = validatedData.long_description;
         if (validatedData.image_url !== undefined) updateData.image_url = validatedData.image_url;
+        if (validatedData.gallery_urls !== undefined) updateData.gallery_urls = validatedData.gallery_urls;
         if (validatedData.redirect_url !== undefined) updateData.redirect_url = formatWhatsAppUrl(validatedData.redirect_url);
         if (validatedData.tier !== undefined) updateData.tier = validatedData.tier;
         if (validatedData.category !== undefined) updateData.category = validatedData.category;
         if (validatedData.priority !== undefined) updateData.priority = validatedData.priority;
+
+        // Geolocation updates
+        if (validatedData.lat !== undefined) updateData.lat = validatedData.lat;
+        if (validatedData.lng !== undefined) updateData.lng = validatedData.lng;
+        if (validatedData.address !== undefined) updateData.address = validatedData.address;
+        if (validatedData.show_on_map !== undefined) updateData.show_on_map = validatedData.show_on_map;
+        if (validatedData.is_permanent !== undefined) updateData.is_permanent = validatedData.is_permanent;
+
         if (validatedData.expiration_date !== undefined) updateData.expiration_date = validatedData.expiration_date;
         if (validatedData.is_active !== undefined) updateData.is_active = validatedData.is_active;
 
