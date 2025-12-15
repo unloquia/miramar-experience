@@ -13,16 +13,6 @@ function isSupabaseConfigured(): boolean {
     return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
-// Helper para timeout
-const withTimeout = <T>(promise: PromiseLike<T>, ms: number = 5000): Promise<T> => {
-    return Promise.race([
-        promise as Promise<T>,
-        new Promise<T>((_, reject) =>
-            setTimeout(() => reject(new Error('Supabase query timed out')), ms)
-        )
-    ]);
-};
-
 /**
  * Get all active hero tier ads (for carousel)
  * Filters: is_active = true AND expiration_date > NOW()
@@ -30,11 +20,11 @@ const withTimeout = <T>(promise: PromiseLike<T>, ms: number = 5000): Promise<T> 
 export async function getHeroAds(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
-    const fetchHeroAds = async (): Promise<Ad[]> => {
+    try {
         const supabase = await createServerSupabaseClient();
         const { data, error } = await supabase
             .from('ads')
-            .select('id, business_name, description, image_url, redirect_url, tier')
+            .select('*')
             .eq('tier', 'hero')
             .eq('is_active', true)
             .gt('expiration_date', new Date().toISOString())
@@ -46,12 +36,8 @@ export async function getHeroAds(): Promise<Ad[]> {
             return [];
         }
         return data as Ad[];
-    };
-
-    try {
-        return await withTimeout(fetchHeroAds(), 5000);
     } catch (error) {
-        console.error('Error/Timeout in getHeroAds:', error);
+        console.error('Error in getHeroAds:', error);
         return [];
     }
 }
@@ -64,11 +50,11 @@ export async function getHeroAds(): Promise<Ad[]> {
 export async function getGridAds(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
-    const fetchGridAds = async (): Promise<Ad[]> => {
+    try {
         const supabase = await createServerSupabaseClient();
         const { data, error } = await supabase
             .from('ads')
-            .select('id, business_name, description, image_url, tier, category, redirect_url')
+            .select('*')
             .in('tier', ['featured', 'standard'])
             .eq('is_active', true)
             .gt('expiration_date', new Date().toISOString())
@@ -80,12 +66,8 @@ export async function getGridAds(): Promise<Ad[]> {
             return [];
         }
         return data as Ad[];
-    };
-
-    try {
-        return await withTimeout(fetchGridAds(), 6000);
     } catch (error) {
-        console.error('Error/Timeout in getGridAds:', error);
+        console.error('Error in getGridAds:', error);
         return [];
     }
 }
@@ -193,11 +175,11 @@ export async function getAdsByCategory(category: string): Promise<Ad[]> {
 export async function getPlacesForMap(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
-    const fetchPlaces = async (): Promise<Ad[]> => {
+    try {
         const supabase = await createServerSupabaseClient();
         const { data, error } = await supabase
             .from('ads')
-            .select('id, business_name, lat, lng, category, image_url, address, tier')
+            .select('*')
             .eq('is_active', true)
             .eq('show_on_map', true)
             .not('lat', 'is', null)
@@ -211,12 +193,8 @@ export async function getPlacesForMap(): Promise<Ad[]> {
             return [];
         }
         return data as Ad[];
-    };
-
-    try {
-        return await withTimeout(fetchPlaces(), 5000);
     } catch (error) {
-        console.error('Error/Timeout in getPlacesForMap:', error);
+        console.error('Error in getPlacesForMap:', error);
         return [];
     }
 }
