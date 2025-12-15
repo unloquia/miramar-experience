@@ -7,7 +7,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Megaphone, Settings, Home } from 'lucide-react';
+import { LayoutDashboard, Megaphone, Settings, Home, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -20,6 +20,11 @@ const navItems = [
         label: 'Anuncios',
         href: '/admin/ads',
         icon: Megaphone,
+    },
+    {
+        label: 'Guía de Uso',
+        href: '/admin/tutorial',
+        icon: BookOpen,
     },
     {
         label: 'Configuración',
