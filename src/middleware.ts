@@ -26,6 +26,16 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
+    const requestUrl = request.nextUrl;
+    const isAdminRoute = requestUrl.pathname.startsWith('/admin');
+    const isLoginRoute = requestUrl.pathname === '/login';
+
+    // Optimization: If NOT admin or login route, skip Supabase check completely
+    // This saves massive CPU usage on public pages
+    if (!isAdminRoute && !isLoginRoute) {
+        return NextResponse.next();
+    }
+
     let supabaseResponse = NextResponse.next({
         request,
     });
@@ -53,15 +63,13 @@ export async function middleware(request: NextRequest) {
         }
     );
 
-    // Refresh session
+    // Refresh session only for auth-related routes
     const {
         data: { user },
     } = await supabase.auth.getUser();
 
     // Protected routes - require authentication
-    const isProtectedRoute = request.nextUrl.pathname.startsWith('/admin');
-
-    if (isProtectedRoute && !user) {
+    if (isAdminRoute && !user) {
         // Redirect to login page
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
@@ -69,8 +77,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // If user is logged in and tries to access login page, redirect to admin
-    const isAuthRoute = request.nextUrl.pathname === '/login';
-    if (isAuthRoute && user) {
+    if (isLoginRoute && user) {
         return NextResponse.redirect(new URL('/admin', request.url));
     }
 
@@ -84,9 +91,8 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
-         * - public folder
-         * - api routes
+         * - images (files ending in .png, .jpg, .jpeg, .gif, .webp, .svg)
          */
-        '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
+        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 };
