@@ -1,35 +1,38 @@
 -- ============================================
--- STORAGE FIX: Create bucket and policies
+-- STORAGE FIX v2 (SAFE MODE)
 -- ============================================
 
--- 1. Create the bucket 'ads-images' if it doesn't exist
+-- 1. Create bucket (SAFE)
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('ads-images', 'ads-images', true)
 ON CONFLICT (id) DO NOTHING;
 
--- 2. Enable RLS on objects (seguridad para archivos)
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- NOTE: We skipped 'ALTER TABLE storage.objects' as it requires superuser permissions
+-- and RLS is enabled by default anyway.
 
--- 3. Policy: Public Read Access (Cualquiera puede ver las imágenes)
+-- 2. Policies (SAFE)
+
+-- Public Access
 DROP POLICY IF EXISTS "Public Access" ON storage.objects;
 CREATE POLICY "Public Access"
 ON storage.objects FOR SELECT
 USING ( bucket_id = 'ads-images' );
 
--- 4. Policy: Authenticated Upload Access (Solo admin logueado puede subir)
+-- Authenticated Upload
 DROP POLICY IF EXISTS "Authenticated Upload" ON storage.objects;
-CREATE POLICY "Authenticated Upload"
-ON storage.objects FOR INSERT
-TO authenticated
+CREATE POLICY "Authenticated Upload" 
+ON storage.objects FOR INSERT 
+TO authenticated 
 WITH CHECK ( bucket_id = 'ads-images' );
 
--- 5. Policy: Authenticated Update/Delete (Solo admin puede borrar/editar)
+-- Authenticated Delete
 DROP POLICY IF EXISTS "Authenticated Delete" ON storage.objects;
 CREATE POLICY "Authenticated Delete"
 ON storage.objects FOR DELETE
 TO authenticated
 USING ( bucket_id = 'ads-images' );
 
+-- Authenticated Update
 DROP POLICY IF EXISTS "Authenticated Update" ON storage.objects;
 CREATE POLICY "Authenticated Update"
 ON storage.objects FOR UPDATE
