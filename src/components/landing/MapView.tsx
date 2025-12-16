@@ -119,7 +119,7 @@ export function MapView({
         <div className={cn("relative", className)}>
             {/* Category Filters */}
             {showFilters && (
-                <div className="absolute top-4 left-4 z-[1000] flex flex-wrap gap-2 bg-card/90 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                <div className="absolute top-4 left-4 z-[1001] flex flex-wrap gap-2 bg-card/90 backdrop-blur-sm p-2 rounded-lg shadow-lg">
                     <button
                         onClick={() => setFilter(null)}
                         className={cn(
@@ -195,7 +195,7 @@ export function MapView({
             </MapContainer>
 
             {/* Legend */}
-            <div className="absolute bottom-4 right-4 z-[1000] bg-card/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
+            <div className="absolute bottom-4 right-4 z-[1001] bg-card/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
                 <p className="text-xs font-medium mb-2">Leyenda</p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                     {categories.map((cat) => (
@@ -212,7 +212,7 @@ export function MapView({
 
             {/* Empty State */}
             {filteredPlaces.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-card/50 backdrop-blur-sm rounded-xl z-[1000]">
+                <div className="absolute inset-0 flex items-center justify-center bg-card/50 backdrop-blur-sm rounded-xl z-[900]">
                     <div className="text-center p-6">
                         <span className="material-symbols-outlined text-4xl text-muted-foreground">location_off</span>
                         <p className="text-muted-foreground mt-2">
