@@ -196,7 +196,28 @@ export default async function PlacePage({
             </div>
 
             {/* Footer Spacer */}
-            <div className="h-20" />
+            <div className="h-24 md:h-20" />
+
+            {/* Mobile Floating Action Button */}
+            {place.redirect_url && (
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t border-border md:hidden z-50">
+                    <a href={place.redirect_url} target="_blank" rel="noopener noreferrer">
+                        <Button className="w-full text-base font-bold h-12 shadow-lg flex items-center justify-center gap-2 rounded-xl">
+                            {place.redirect_url.includes('wa.me') ? (
+                                <>
+                                    <MessageCircle className="h-5 w-5" />
+                                    Contactar por WhatsApp
+                                </>
+                            ) : (
+                                <>
+                                    <ExternalLink className="h-5 w-5" />
+                                    Visitar Sitio Web
+                                </>
+                            )}
+                        </Button>
+                    </a>
+                </div>
+            )}
         </div>
     );
 }

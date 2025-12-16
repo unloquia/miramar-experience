@@ -133,17 +133,13 @@ export function HeroCarousel({ ads }: HeroCarouselProps) {
                                         {ad.description}
                                     </p>
                                 )}
-                                {ad.redirect_url && (
-                                    <a
-                                        href={ad.redirect_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl h-14 px-8 bg-primary hover:bg-[#0fd6d6] text-primary-foreground text-base font-bold tracking-wide shadow-lg hover:shadow-primary/50 hover:-translate-y-1 transition-all duration-300 mt-4"
-                                    >
-                                        <span className="mr-2">Ver más</span>
-                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                    </a>
-                                )}
+                                <a
+                                    href={`/place/${ad.id}`}
+                                    className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl h-14 px-8 bg-primary hover:bg-[#0fd6d6] text-primary-foreground text-base font-bold tracking-wide shadow-lg hover:shadow-primary/50 hover:-translate-y-1 transition-all duration-300 mt-4"
+                                >
+                                    <span className="mr-2">Ver más</span>
+                                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                </a>
                             </div>
                         </div>
                     ))}
@@ -185,8 +181,8 @@ export function HeroCarousel({ ads }: HeroCarouselProps) {
                             key={index}
                             onClick={() => emblaApi?.scrollTo(index)}
                             className={`w-2 h-2 rounded-full transition-all ${emblaApi?.selectedScrollSnap() === index
-                                    ? 'bg-primary w-6'
-                                    : 'bg-white/50'
+                                ? 'bg-primary w-6'
+                                : 'bg-white/50'
                                 }`}
                             aria-label={`Ir a slide ${index + 1}`}
                         />
