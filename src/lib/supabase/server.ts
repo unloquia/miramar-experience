@@ -4,6 +4,7 @@
  */
 
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { Database } from '@/types/database';
 
@@ -34,6 +35,17 @@ export async function createServerSupabaseClient() {
                 },
             },
         }
+    );
+}
+
+/**
+ * Create a public Supabase client WITHOUT cookies
+ * For fetching public data (ads, places) efficiently without session overhead
+ */
+export function createPublicSupabaseClient() {
+    return createClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
     );
 }
 

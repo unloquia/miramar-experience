@@ -3,7 +3,7 @@
  * Server-side queries for ads
  */
 
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient, createPublicSupabaseClient } from '@/lib/supabase/server';
 import { Ad } from '@/types/database';
 
 /**
@@ -21,7 +21,7 @@ export async function getHeroAds(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
     try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createPublicSupabaseClient();
         const { data, error } = await supabase
             .from('ads')
             .select('*')
@@ -51,7 +51,7 @@ export async function getGridAds(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
     try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createPublicSupabaseClient();
         const { data, error } = await supabase
             .from('ads')
             .select('*')
@@ -114,7 +114,7 @@ export async function getAdById(id: string): Promise<Ad | null> {
     }
 
     try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createPublicSupabaseClient();
 
         const { data, error } = await supabase
             .from('ads')
@@ -145,7 +145,7 @@ export async function getAdsByCategory(category: string): Promise<Ad[]> {
     }
 
     try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createPublicSupabaseClient();
 
         const { data, error } = await supabase
             .from('ads')
@@ -176,7 +176,7 @@ export async function getPlacesForMap(): Promise<Ad[]> {
     if (!isSupabaseConfigured()) return [];
 
     try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createPublicSupabaseClient();
         const { data, error } = await supabase
             .from('ads')
             .select('*')
