@@ -30,8 +30,19 @@ export default async function HomePage() {
           <BentoGridEmpty />
         )}
 
-        {/* Map Section - TEMPORARILY DISABLED */}
-        {/* <Suspense fallback={...}><MapSection /></Suspense> */}
+        {/* Map Section - Loads asynchronously via Suspense streaming */}
+        <Suspense fallback={
+          <section className="w-full bg-muted/30 py-20">
+            <div className="max-w-[1280px] mx-auto px-4">
+              <div className="h-[500px] flex flex-col items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground">Cargando mapa de Miramar...</p>
+              </div>
+            </div>
+          </section>
+        }>
+          <MapSection />
+        </Suspense>
       </main>
 
       <Footer />
