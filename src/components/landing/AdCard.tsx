@@ -29,7 +29,7 @@ export function AdCard({ ad }: AdCardProps) {
 // Featured Card - Larger with more details
 function FeaturedCard({ ad, category }: { ad: Ad; category: typeof categoryInfo[keyof typeof categoryInfo] }) {
     return (
-        <div className="group relative h-full md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary/20 hover:scale-[1.01] transition-all duration-500 cursor-pointer">
+        <a href={`/place/${ad.id}`} className="block group relative h-full md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary/20 hover:scale-[1.01] transition-all duration-500 cursor-pointer">
             {/* Background Image */}
             <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -68,37 +68,23 @@ function FeaturedCard({ ad, category }: { ad: Ad; category: typeof categoryInfo[
                     )}
 
                     {/* CTA Button - Appears on hover */}
-                    {ad.redirect_url && (
-                        <div className="h-0 group-hover:h-12 opacity-0 group-hover:opacity-100 overflow-hidden transition-all duration-500 ease-in-out mt-0 group-hover:mt-4">
-                            <a
-                                href={ad.redirect_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full h-12 bg-primary hover:bg-[#0fd6d6] text-primary-foreground font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
-                            >
-                                <span>Ver más</span>
-                                <ExternalLink className="w-4 h-4" />
-                            </a>
+                    <div className="h-0 group-hover:h-12 opacity-0 group-hover:opacity-100 overflow-hidden transition-all duration-500 ease-in-out mt-0 group-hover:mt-4">
+                        <div className="w-full h-12 bg-primary hover:bg-[#0fd6d6] text-primary-foreground font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <span>Ver detalles</span>
+                            <ExternalLink className="w-4 h-4" />
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
     );
 }
 
 // Standard Card - Regular size
 function StandardCard({ ad, category }: { ad: Ad; category: typeof categoryInfo[keyof typeof categoryInfo] }) {
-    const CardWrapper = ad.redirect_url ? 'a' : 'div';
-    const cardProps = ad.redirect_url ? {
-        href: ad.redirect_url,
-        target: '_blank',
-        rel: 'noopener noreferrer',
-    } : {};
-
     return (
-        <CardWrapper
-            {...cardProps}
+        <a
+            href={`/place/${ad.id}`}
             className="group relative h-full rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-500 cursor-pointer block"
         >
             {/* Background Image */}
@@ -122,7 +108,7 @@ function StandardCard({ ad, category }: { ad: Ad; category: typeof categoryInfo[
             <button className="absolute top-4 right-4 size-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-primary hover:text-primary-foreground transition-colors">
                 <span className="material-symbols-outlined text-sm">arrow_outward</span>
             </button>
-        </CardWrapper>
+        </a>
     );
 }
 
