@@ -11,11 +11,9 @@ import { Loader2 } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  // Fetch ads server-side
-  const [heroAds, gridAds] = await Promise.all([
-    getHeroAds(),
-    getGridAds(),
-  ]);
+  // Fetch ads server-side SEQUENTIALLY to avoid race condition on cookies()
+  const heroAds = await getHeroAds();
+  const gridAds = await getGridAds();
 
   return (
     <>
