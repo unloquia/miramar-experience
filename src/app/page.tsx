@@ -30,8 +30,7 @@ export default async function HomePage() {
           <BentoGridEmpty />
         )}
 
-        {/* Map Section - TEMPORARILY DISABLED TO ISOLATE ISSUE */}
-        {/*
+        {/* Map Section - Loads asynchronously via Suspense streaming */}
         <Suspense fallback={
           <section className="w-full bg-muted/30 py-20">
             <div className="max-w-[1280px] mx-auto px-4">
@@ -44,7 +43,6 @@ export default async function HomePage() {
         }>
           <MapSection />
         </Suspense>
-        */}
       </main>
 
       <Footer />
