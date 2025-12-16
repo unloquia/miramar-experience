@@ -84,6 +84,21 @@ export interface Database {
                 Row: Ad;
                 Insert: CreateAdInput;
                 Update: Partial<CreateAdInput>;
+            },
+            analytics_events: {
+                Row: {
+                    id: string;
+                    ad_id: string;
+                    event_type: string;
+                    created_at: string;
+                    meta: any;
+                };
+                Insert: {
+                    ad_id: string;
+                    event_type: string;
+                    meta?: any;
+                };
+                Update: never;
             };
         };
         Enums: {

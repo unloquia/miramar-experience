@@ -1,16 +1,13 @@
-/**
- * Place Detail Page
- * Shows full information about a business/place
- */
-
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getAdById } from '@/lib/data/ads';
 import { categoryInfo } from '@/lib/schemas';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MapPin, ExternalLink, MessageCircle, Share2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Share2, ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
+import { trackEvent } from '@/lib/actions/analytics';
+import { ContactButton } from '@/components/landing/ContactButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,6 +46,9 @@ export default async function PlacePage({
     if (!place) {
         notFound();
     }
+
+    // Analytics: Track View (Fire and forget)
+    trackEvent(place.id, 'view_detail');
 
     const category = categoryInfo[place.category];
     const hasLocation = place.lat !== null && place.lng !== null;
@@ -106,21 +106,11 @@ export default async function PlacePage({
                         {/* Action Buttons */}
                         <div className="flex gap-2">
                             {place.redirect_url && (
-                                <a href={place.redirect_url} target="_blank" rel="noopener noreferrer">
-                                    <Button className="gap-2">
-                                        {place.redirect_url.includes('wa.me') ? (
-                                            <>
-                                                <MessageCircle className="h-4 w-4" />
-                                                WhatsApp
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ExternalLink className="h-4 w-4" />
-                                                Visitar
-                                            </>
-                                        )}
-                                    </Button>
-                                </a>
+                                <ContactButton
+                                    adId={place.id}
+                                    url={place.redirect_url}
+                                    label={place.redirect_url.includes('wa.me') ? "WhatsApp" : "Visitar"}
+                                />
                             )}
                         </div>
                     </div>
@@ -201,21 +191,12 @@ export default async function PlacePage({
             {/* Mobile Floating Action Button */}
             {place.redirect_url && (
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t border-border md:hidden z-50">
-                    <a href={place.redirect_url} target="_blank" rel="noopener noreferrer">
-                        <Button className="w-full text-base font-bold h-12 shadow-lg flex items-center justify-center gap-2 rounded-xl">
-                            {place.redirect_url.includes('wa.me') ? (
-                                <>
-                                    <MessageCircle className="h-5 w-5" />
-                                    Contactar por WhatsApp
-                                </>
-                            ) : (
-                                <>
-                                    <ExternalLink className="h-5 w-5" />
-                                    Visitar Sitio Web
-                                </>
-                            )}
-                        </Button>
-                    </a>
+                    <ContactButton
+                        adId={place.id}
+                        url={place.redirect_url}
+                        fullWidth={true}
+                        className="text-base font-bold h-12 rounded-xl shadow-lg"
+                    />
                 </div>
             )}
         </div>

@@ -444,6 +444,49 @@ export default function TutorialPage() {
                 </Card>
             </section>
 
+            {/* Section 6: Metrics & Analytics */}
+            <section id="analytics" className="scroll-mt-20">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-2xl text-primary">trending_up</span>
+                            Métricas y Analytics
+                        </CardTitle>
+                        <CardDescription>
+                            El sistema registra automáticamente cómo interactúan los usuarios con los anuncios.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-100 dark:border-blue-900">
+                            <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">📊 ¿Qué se está midiendo?</h4>
+                            <ul className="space-y-2 text-sm text-muted-foreground">
+                                <li className="flex items-start gap-2">
+                                    <span className="mt-0.5">•</span>
+                                    <span>
+                                        <strong>Vistas de Detalle:</strong> Cantidad de veces que alguien abre la ficha completa de un lugar.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="mt-0.5">•</span>
+                                    <span>
+                                        <strong>Clicks en WhatsApp:</strong> Cantidad de veces que alguien toca el botón "Contactar por WhatsApp".
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="mt-0.5">•</span>
+                                    <span>
+                                        <strong>Visitas Web:</strong> Clicks hacia sitios web externos o Instagram.
+                                    </span>
+                                </li>
+                            </ul>
+                            <p className="mt-4 text-xs text-muted-foreground italic">
+                                * Estos datos se guardan internamente para generar reportes futuros de rendimiento para los anunciantes.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </section>
+
             {/* FAQ */}
             <section id="faq" className="scroll-mt-20">
                 <Card>
