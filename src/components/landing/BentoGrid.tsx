@@ -90,24 +90,23 @@ function arrangeAds(featured: Ad[], standard: Ad[]): Ad[] {
     let featuredIndex = 0;
     let standardIndex = 0;
 
-    // Pattern: Try to place featured every 3-4 items
+    // Pattern: 1 Featured -> up to 2 Standard -> Repeat
     while (featuredIndex < featured.length || standardIndex < standard.length) {
-        // Place featured if available and we've placed 2-3 standards
-        if (featuredIndex < featured.length && (standardIndex === 0 || standardIndex % 3 === 0)) {
+
+        // Always try to place a featured ad first in the cycle
+        if (featuredIndex < featured.length) {
             result.push(featured[featuredIndex]);
             featuredIndex++;
         }
-        // Place up to 2 standards
+
+        // Then place up to 2 standard ads
         for (let i = 0; i < 2 && standardIndex < standard.length; i++) {
             result.push(standard[standardIndex]);
             standardIndex++;
         }
-    }
 
-    // Add any remaining featured
-    while (featuredIndex < featured.length) {
-        result.push(featured[featuredIndex]);
-        featuredIndex++;
+        // SAFETY BREAK: If we happen to have logic that prevents progress, break
+        // (Though the logic above guarantees progress if checks pass)
     }
 
     return result;
