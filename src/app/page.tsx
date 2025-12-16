@@ -32,17 +32,8 @@ export default async function HomePage() {
           <BentoGridEmpty />
         )}
 
-        {/* Map Section - Suspense for streaming */}
-        <Suspense fallback={
-          <div className="w-full h-[500px] flex items-center justify-center bg-muted/20">
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p>Cargando mapa...</p>
-            </div>
-          </div>
-        }>
-          <MapSection />
-        </Suspense>
+        {/* Map Section - TEMPORARILY DISABLED */}
+        {/* <Suspense fallback={...}><MapSection /></Suspense> */}
       </main>
 
       <Footer />
