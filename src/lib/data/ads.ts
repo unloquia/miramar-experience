@@ -18,11 +18,19 @@ function isSupabaseConfigured(): boolean {
  * Filters: is_active = true AND expiration_date > NOW()
  */
 export async function getHeroAds(): Promise<Ad[]> {
-    if (!isSupabaseConfigured()) return [];
+    if (!isSupabaseConfigured()) {
+        return [];
+    }
 
     try {
         const supabase = createPublicSupabaseClient();
-        const { data, error } = await supabase
+
+        // Timeout mechanism manual (5s) to prevent Vercel 504s
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout fetching hero ads')), 5000)
+        );
+
+        const queryPromise = supabase
             .from('ads')
             .select('*')
             .eq('tier', 'hero')
@@ -30,6 +38,8 @@ export async function getHeroAds(): Promise<Ad[]> {
             .gt('expiration_date', new Date().toISOString())
             .order('priority', { ascending: false })
             .limit(5);
+
+        const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
         if (error) {
             console.error('Error fetching hero ads:', error);
@@ -52,7 +62,13 @@ export async function getGridAds(): Promise<Ad[]> {
 
     try {
         const supabase = createPublicSupabaseClient();
-        const { data, error } = await supabase
+
+        // Timeout mechanism manual (5s)
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout fetching grid ads')), 5000)
+        );
+
+        const queryPromise = supabase
             .from('ads')
             .select('*')
             .in('tier', ['featured', 'standard'])
@@ -60,6 +76,8 @@ export async function getGridAds(): Promise<Ad[]> {
             .gt('expiration_date', new Date().toISOString())
             .order('tier', { ascending: true })
             .order('priority', { ascending: false });
+
+        const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
         if (error) {
             console.error('Error fetching grid ads:', error);
