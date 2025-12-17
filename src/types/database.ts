@@ -100,6 +100,23 @@ export interface Database {
                 };
                 Update: never;
             };
+            system_settings: {
+                Row: {
+                    key: string;
+                    value: string;
+                    description: string | null;
+                    updated_at: string;
+                };
+                Insert: {
+                    key: string;
+                    value: string;
+                    description?: string | null;
+                };
+                Update: {
+                    value?: string;
+                    description?: string | null;
+                };
+            };
         };
         Enums: {
             ad_tier: AdTier;
