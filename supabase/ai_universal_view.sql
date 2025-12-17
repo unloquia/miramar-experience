@@ -11,6 +11,7 @@ create table if not exists system_settings (
 alter table system_settings enable row level security;
 
 -- Politica: Solo admins pueden ver y editar
+drop policy if exists "Admins can manage settings" on system_settings;
 create policy "Admins can manage settings" on system_settings
   using (auth.role() = 'authenticated')
   with check (auth.role() = 'authenticated');
