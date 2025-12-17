@@ -16,9 +16,11 @@ create index if not exists idx_analytics_event_type on analytics_events(event_ty
 alter table analytics_events enable row level security;
 
 -- Permitir insertar a cualquiera (anon) para trackear
+drop policy if exists "Enable insert for anon" on analytics_events;
 create policy "Enable insert for anon" on analytics_events for insert
 with check (true);
 
 -- Permitir lectura solo a autenticados (admin)
+drop policy if exists "Enable read for authenticated" on analytics_events;
 create policy "Enable read for authenticated" on analytics_events for select
 using (auth.role() = 'authenticated');
