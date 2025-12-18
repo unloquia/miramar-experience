@@ -71,11 +71,10 @@ export async function getGridAds(): Promise<Ad[]> {
         const queryPromise = supabase
             .from('ads')
             .select('*')
-            .in('tier', ['featured', 'standard'])
+            .eq('tier', 'featured') // Home Page es SOLO para Featured (Sponsors)
             .eq('is_active', true)
             .gt('expiration_date', new Date().toISOString())
-            .order('tier', { ascending: true })
-            .order('priority', { ascending: false });
+            .order('priority', { ascending: false }); // Priority decide el orden en home
 
         const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
@@ -243,7 +242,10 @@ export async function getAllPlaces(options?: { category?: string; query?: string
         }
 
         if (options?.query) {
-            query = query.ilike('business_name', `%${options.query}%`);
+            // Busqueda "fuzzy" en nombre O descripcion
+            // Nota: La sintaxis de Supabase JS para OR con filtros ilike complejos es un poco verbosa
+            // Usamos formato raw string para el OR
+            query = query.or(`business_name.ilike.%${options.query}%,description.ilike.%${options.query}%`);
         }
 
         const { data, error } = await query;
