@@ -69,6 +69,15 @@ export async function syncGoogleSheetAction() {
         const sheetId = setting?.value;
         if (!sheetId) throw new Error('Google Sheet ID no configurado. Guárdalo primero.');
 
+        // 1.5 Get Private Key Override (Rescue for Vercel Env Issues)
+        const { data: keySetting } = await (supabase
+            .from('system_settings') as any)
+            .select('value')
+            .eq('key', 'google_private_key_override')
+            .single();
+
+        const privateKeyOverride = keySetting?.value;
+
         // 2. Get Data from AI View
         const { data: ads, error: adsError } = await (supabase as any)
             .from('ai_knowledge_base')
@@ -77,7 +86,11 @@ export async function syncGoogleSheetAction() {
         if (adsError) throw new Error(`Error leyendo DB (View): ${adsError.message}`);
 
         // 3. Sync
-        await syncToGoogleSheet(ads, { spreadsheetId: sheetId, sheetName: 'BotData' });
+        await syncToGoogleSheet(
+            ads,
+            { spreadsheetId: sheetId, sheetName: 'BotData' },
+            privateKeyOverride ? { private_key: privateKeyOverride } : undefined
+        );
 
         revalidatePath('/admin/settings/integrations');
         return { success: true, count: ads.length };

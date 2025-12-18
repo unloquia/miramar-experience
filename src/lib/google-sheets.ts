@@ -7,22 +7,36 @@ interface SheetConfig {
     sheetName?: string; // Defualt: 'Sheet1'
 }
 
+interface GoogleCredentials {
+    client_email?: string;
+    private_key?: string;
+}
+
 /**
  * Initialize Google Auth Client
  */
-function getAuthClient() {
-    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'miramar-sync-bot@miramar-bot-sync.iam.gserviceaccount.com';
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'); // Fix for Vercel env vars
+function getAuthClient(credentials?: GoogleCredentials) {
+    // 1. Try explicit credentials
+    let email = credentials?.client_email;
+    let privateKey = credentials?.private_key;
 
-    console.log('🤖 Auth Check Debug:', {
+    // 2. Fallback to Env Vars (with hardcoded email fallback for safety)
+    if (!email) {
+        email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'miramar-sync-bot@miramar-bot-sync.iam.gserviceaccount.com';
+    }
+    if (!privateKey) {
+        privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    }
+
+    // Debug Log (Masked)
+    console.log('🤖 Auth Check:', {
         hasEmail: !!email,
-        emailLength: email?.length,
         hasKey: !!privateKey,
-        keyLength: privateKey?.length
+        keyStart: privateKey?.substring(0, 10)
     });
 
     if (!email || !privateKey) {
-        throw new Error(`Missing Google Credentials. Email: ${!!email}, Key: ${!!privateKey}`);
+        throw new Error(`Missing Google Credentials. EmailSet: ${!!email}, KeySet: ${!!privateKey}`);
     }
 
     return new JWT({
@@ -39,13 +53,13 @@ function getAuthClient() {
  * @param data Array of row objects (e.g. from database view)
  * @param config Sheet configuration
  */
-export async function syncToGoogleSheet(data: Record<string, any>[], config: SheetConfig) {
+export async function syncToGoogleSheet(data: Record<string, any>[], config: SheetConfig, credentials?: GoogleCredentials) {
     if (!data || data.length === 0) {
         console.warn('No data to sync to Google Sheets');
         return;
     }
 
-    const auth = getAuthClient();
+    const auth = getAuthClient(credentials);
     const sheets = google.sheets({ version: 'v4', auth });
 
     // Extract headers from the first object

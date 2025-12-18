@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { updateSystemSetting, syncGoogleSheetAction } from '@/lib/actions/settings';
 import { RefreshCw, Save, FileSpreadsheet, Copy, Bot } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea'; // Import Textarea
 
 interface IntegrationFormProps {
     initialSheetId: string;
@@ -17,6 +18,8 @@ interface IntegrationFormProps {
 
 export function IntegrationForm({ initialSheetId, serviceEmail }: IntegrationFormProps) {
     const [sheetId, setSheetId] = useState(initialSheetId);
+    const [privateKey, setPrivateKey] = useState(''); // New State
+    const [showKeyField, setShowKeyField] = useState(false); // New State
     const [isSaving, setIsSaving] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
 
@@ -24,10 +27,29 @@ export function IntegrationForm({ initialSheetId, serviceEmail }: IntegrationFor
         e.preventDefault();
         setIsSaving(true);
         try {
-            const res = await updateSystemSetting('google_sheet_id', sheetId);
-            if (!res.success) throw new Error(res.error || 'Error al guardar');
+            // 1. Guardar Sheet ID
+            let res = await updateSystemSetting('google_sheet_id', sheetId);
+            if (!res.success) throw new Error(res.error || 'Error al guardar ID');
+
+            // 2. Guardar Private Key Override si se ingresó
+            if (privateKey) {
+                // Normalizar clave antes de guardar (asegurar newlines)
+                // Si el usuario pega con espacios en vez de saltos, intentamos arreglarlo si parece un PEM
+                let formattedKey = privateKey;
+                if (!privateKey.includes('\n') && privateKey.includes('PRIVATE KEY')) {
+                    // Intento basico de fix si esta todo en una linea
+                    formattedKey = privateKey
+                        .replace('-----BEGIN PRIVATE KEY-----', '-----BEGIN PRIVATE KEY-----\n')
+                        .replace('-----END PRIVATE KEY-----', '\n-----END PRIVATE KEY-----');
+                    // El cuerpo deberia tener saltos cada 64 chars idealmente, pero Google Client suele ser tolerante si los headers estan bien
+                }
+
+                res = await updateSystemSetting('google_private_key_override', formattedKey);
+                if (!res.success) throw new Error(res.error || 'Error al guardar clave');
+            }
 
             toast.success('Configuración guardada correctamente');
+            if (privateKey) setPrivateKey(''); // Limpiar campo por seguridad visual
         } catch (error: any) {
             toast.error(error.message || 'Error al guardar configuración');
         } finally {
