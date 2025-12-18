@@ -11,11 +11,18 @@ interface SheetConfig {
  * Initialize Google Auth Client
  */
 function getAuthClient() {
-    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'miramar-sync-bot@miramar-bot-sync.iam.gserviceaccount.com';
     const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'); // Fix for Vercel env vars
 
+    console.log('🤖 Auth Check Debug:', {
+        hasEmail: !!email,
+        emailLength: email?.length,
+        hasKey: !!privateKey,
+        keyLength: privateKey?.length
+    });
+
     if (!email || !privateKey) {
-        throw new Error('Missing Google Service Account credentials (GOOGLE_SERVICE_ACCOUNT_EMAIL or GOOGLE_PRIVATE_KEY)');
+        throw new Error(`Missing Google Credentials. Email: ${!!email}, Key: ${!!privateKey}`);
     }
 
     return new JWT({
