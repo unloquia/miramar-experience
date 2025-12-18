@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { updateSystemSetting } from '@/lib/actions/settings';
+import { updateSystemSetting, syncGoogleSheetAction } from '@/lib/actions/settings';
 import { RefreshCw, Save, FileSpreadsheet, Copy, Bot } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
@@ -36,16 +36,13 @@ export function IntegrationForm({ initialSheetId, serviceEmail }: IntegrationFor
     const handleSync = async () => {
         setIsSyncing(true);
         try {
-            // Llamar al API Route protegido por Cron Secret o Session
-            // Como esto es client-side admin, el API route deberia chequear sesion si no hay Authorization header
-            const res = await fetch('/api/sync');
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data.error || 'Error desconocido');
-
-            toast.success(`Sincronización exitosa: ${data.count} registros actualizados.`);
+            // Usamos Server Action para sincronizar con permisos de administrador (session)
+            // en lugar de usar endpoint protegido (cron)
+            const result = await syncGoogleSheetAction();
+            toast.success(`Sincronización exitosa: ${result.count} registros actualizados.`);
         } catch (error: any) {
-            toast.error(`Error al sincronizar: ${error.message}`);
+            console.error(error);
+            toast.error(error.message || 'Error al sincronizar');
         } finally {
             setIsSyncing(false);
         }
