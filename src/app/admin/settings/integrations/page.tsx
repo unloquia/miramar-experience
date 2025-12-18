@@ -3,6 +3,8 @@ import { IntegrationForm } from '@/components/admin/IntegrationForm';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function IntegrationsPage() {
     const sheetId = await getSystemSetting('google_sheet_id');
     const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
