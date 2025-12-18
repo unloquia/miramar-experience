@@ -24,10 +24,12 @@ export function IntegrationForm({ initialSheetId, serviceEmail }: IntegrationFor
         e.preventDefault();
         setIsSaving(true);
         try {
-            await updateSystemSetting('google_sheet_id', sheetId);
+            const res = await updateSystemSetting('google_sheet_id', sheetId);
+            if (!res.success) throw new Error(res.error || 'Error al guardar');
+
             toast.success('Configuración guardada correctamente');
-        } catch (error) {
-            toast.error('Error al guardar configuración');
+        } catch (error: any) {
+            toast.error(error.message || 'Error al guardar configuración');
         } finally {
             setIsSaving(false);
         }
@@ -39,6 +41,11 @@ export function IntegrationForm({ initialSheetId, serviceEmail }: IntegrationFor
             // Usamos Server Action para sincronizar con permisos de administrador (session)
             // en lugar de usar endpoint protegido (cron)
             const result = await syncGoogleSheetAction();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Fallo desconocido en la sincronización');
+            }
+
             toast.success(`Sincronización exitosa: ${result.count} registros actualizados.`);
         } catch (error: any) {
             console.error(error);
