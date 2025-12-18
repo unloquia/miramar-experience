@@ -22,7 +22,7 @@ interface HeroCarouselProps {
 
 // Fallback image when no hero ads exist
 const FALLBACK_IMAGE = '/images/hero-placeholder.jpg';
-const FALLBACK_TITLE = 'Miramar: Naturaleza y Paz';
+const FALLBACK_TITLE = 'soydeMiramar: Naturaleza y Paz';
 const FALLBACK_SUBTITLE = 'Descubre el secreto mejor guardado de la costa atlántica. Playas extensas, bosques encantados y una gastronomía que despierta tus sentidos.';
 
 export function HeroCarousel({ ads }: HeroCarouselProps) {
@@ -83,8 +83,8 @@ export function HeroCarousel({ ads }: HeroCarouselProps) {
                 {/* Content */}
                 <div className="relative z-20 flex flex-col items-center gap-8 text-center px-4 max-w-4xl mt-16 animate-fade-in-up">
                     <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] tracking-[-0.033em] drop-shadow-lg">
-                        {FALLBACK_TITLE.split(':')[0]}: <br className="hidden md:block" />
-                        <span className="text-primary">{FALLBACK_TITLE.split(':')[1]?.trim().split(' ')[0]}</span> y Paz
+                        {FALLBACK_TITLE.split(':')[0]} <br className="hidden md:block" />
+                        <span className="text-primary">{FALLBACK_TITLE.split(':')[1]?.trim()}</span>
                     </h1>
                     <p className="text-white/90 text-lg md:text-xl font-normal leading-relaxed max-w-2xl drop-shadow-md">
                         {FALLBACK_SUBTITLE}

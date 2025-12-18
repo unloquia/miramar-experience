@@ -7,6 +7,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -40,10 +41,15 @@ export function AdminHeader({ user }: AdminHeaderProps) {
         <header className="fixed top-0 left-0 right-0 h-16 bg-card border-b border-border z-40 flex items-center justify-between px-4 md:px-6">
             {/* Logo */}
             <Link href="/admin" className="flex items-center gap-3">
-                <div className="size-8 text-primary flex items-center justify-center bg-foreground rounded-lg p-1">
-                    <span className="material-symbols-outlined text-[18px]">water_drop</span>
+                <div className="relative size-8 rounded-full overflow-hidden border border-primary/20">
+                    <Image
+                        src="/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg"
+                        alt="Logo Admin"
+                        fill
+                        className="object-cover"
+                    />
                 </div>
-                <span className="font-bold text-lg hidden sm:inline">Miramar Admin</span>
+                <span className="font-bold text-lg hidden sm:inline">soydeMiramar Admin</span>
             </Link>
 
             {/* Mobile menu button (placeholder) */}

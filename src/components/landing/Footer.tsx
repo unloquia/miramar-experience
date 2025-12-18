@@ -4,6 +4,7 @@
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Footer() {
     return (
@@ -41,8 +42,15 @@ export function Footer() {
                             {/* Brand */}
                             <div className="flex flex-col gap-4 max-w-xs">
                                 <div className="flex items-center gap-2 text-foreground">
-                                    <span className="material-symbols-outlined text-primary">water_drop</span>
-                                    <span className="text-xl font-bold">Miramar Experience</span>
+                                    <div className="relative size-8 rounded-full overflow-hidden border border-primary/20">
+                                        <Image
+                                            src="/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg"
+                                            alt="Logo soydeMiramar"
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                    <span className="text-xl font-bold">soydeMiramar</span>
                                 </div>
                                 <p className="text-sm opacity-70 leading-relaxed">
                                     La guía definitiva para disfrutar de la ciudad de los niños. Naturaleza, paz y experiencias inolvidables.
@@ -79,7 +87,7 @@ export function Footer() {
                         {/* Bottom */}
                         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                             <p className="text-sm opacity-60">
-                                © {new Date().getFullYear()} Miramar Experience. Todos los derechos reservados.
+                                © {new Date().getFullYear()} soydeMiramar. Todos los derechos reservados.
                             </p>
                             <div className="flex gap-4">
                                 <a

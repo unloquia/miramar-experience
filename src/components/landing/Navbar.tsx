@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
@@ -31,11 +32,16 @@ export function Navbar() {
                                 href="/"
                                 className="flex items-center gap-3 text-foreground cursor-pointer group"
                             >
-                                <div className="size-8 text-primary flex items-center justify-center bg-foreground rounded-lg p-1 group-hover:bg-primary group-hover:text-foreground transition-colors duration-300">
-                                    <span className="material-symbols-outlined text-[20px]">water_drop</span>
+                                <div className="relative size-10 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors duration-300">
+                                    <Image
+                                        src="/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg"
+                                        alt="Logo soydeMiramar"
+                                        fill
+                                        className="object-cover"
+                                    />
                                 </div>
                                 <h2 className="text-lg font-bold leading-tight tracking-[-0.015em]">
-                                    Miramar Experience
+                                    soydeMiramar
                                 </h2>
                             </Link>
 

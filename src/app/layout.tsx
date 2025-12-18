@@ -5,21 +5,34 @@ import { ChatWidget } from "@/components/chat/ChatWidget";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Miramar Experience | Naturaleza y Paz",
-  description: "Descubre el secreto mejor guardado de la costa atlántica. Playas extensas, bosques encantados y una gastronomía que despierta tus sentidos. La guía definitiva para disfrutar de Miramar, la ciudad de los niños.",
-  keywords: ["Miramar", "turismo", "costa atlántica", "Argentina", "playas", "bosques", "gastronomía", "hotelería"],
-  authors: [{ name: "Miramar Experience" }],
+  title: "soydeMiramar | Naturaleza y Paz",
+  description: "Descubre el secreto mejor guardado de la costa atlántica. La guía definitiva para disfrutar de Miramar, la ciudad de los niños.",
+  keywords: ["Miramar", "soydeMiramar", "turismo", "costa atlántica", "Argentina", "playas", "gastronomía"],
+  authors: [{ name: "soydeMiramar" }],
+  icons: {
+    icon: "/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg",
+    apple: "/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg",
+  },
   openGraph: {
-    title: "Miramar Experience | Naturaleza y Paz",
+    title: "soydeMiramar | Naturaleza y Paz",
     description: "Descubre el secreto mejor guardado de la costa atlántica.",
     type: "website",
     locale: "es_AR",
-    siteName: "Miramar Experience",
+    siteName: "soydeMiramar",
+    images: [
+      {
+        url: "/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg",
+        width: 800,
+        height: 600,
+        alt: "Logo soydeMiramar",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Miramar Experience",
+    title: "soydeMiramar",
     description: "Descubre el secreto mejor guardado de la costa atlántica.",
+    images: ["/images/dbf5bcf1-ba8f-4801-9e6f-533bacca3a23.jpg"],
   },
 };
 
