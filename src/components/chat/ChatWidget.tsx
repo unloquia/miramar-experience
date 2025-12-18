@@ -122,46 +122,72 @@ export function ChatWidget({ token, primaryColor = '#4F46E5', botName = 'Asisten
         if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
 
         pollingIntervalRef.current = setInterval(async () => {
-            // Optimización: Solo poll si la ventana está visible (opcional, aqui lo dejo siempre activo para robustez)
             if (!supabase) return;
 
-            // Buscar mensajes más nuevos que el último que tenemos
-            const lastMsg = messagesRef.current[messagesRef.current.length - 1];
+            // Siempre traemos los mensajes recientes para asegurar que no perdemos ningun estado intermedio
+            const lastRealMsg = messagesRef.current.filter(m => !m.id.startsWith('temp-')).pop();
+
             let query = supabase
                 .from('chat_messages')
                 .select('id, role, message, created_at')
                 .eq('session_id', sessionId)
                 .order('created_at', { ascending: true });
 
-            if (lastMsg) {
-                // Safety margin de 10s para relojes desincronizados
-                const safetyTime = new Date(new Date(lastMsg.created_at).getTime() - 10000).toISOString();
+            if (lastRealMsg) {
+                // Margen de seguridad 15s para relojes desincronizados y garantizar solapamiento de mensajes temporales
+                const safetyTime = new Date(new Date(lastRealMsg.created_at).getTime() - 15000).toISOString();
                 query = query.gt('created_at', safetyTime);
             }
 
             const { data } = await query;
 
             if (data && data.length > 0) {
-                let hasNew = false;
-                const currentIds = new Set(messagesRef.current.map(m => m.id));
+                setMessages(prev => {
+                    const currentMsgs = [...prev];
+                    let hasChanges = false;
+                    const seenIds = new Set(currentMsgs.map(m => m.id));
 
-                const newMessages = data.filter((msg: Message) => !currentIds.has(msg.id));
+                    data.forEach((remoteMsg: Message) => {
+                        // 1. Si ya tenemos ese ID exacto, ignorar
+                        if (seenIds.has(remoteMsg.id)) return;
 
-                if (newMessages.length > 0) {
-                    // Tenemos nuevos mensajes REALES
-                    // Si viene del bot, apagar typing
-                    if (newMessages.some((m: Message) => m.role !== 'user')) {
-                        setIsTyping(false);
-                    }
+                        // 2. Si es mensaje USER, buscar candidato a reemplazo (temp)
+                        if (remoteMsg.role === 'user') {
+                            const tempIndex = currentMsgs.findIndex(m =>
+                                m.id.startsWith('temp-') &&
+                                m.message === remoteMsg.message &&
+                                // Solo considerar temps de los ultimos 5 minutos
+                                (new Date().getTime() - new Date(m.created_at).getTime() < 300000)
+                            );
 
-                    setMessages(prev => {
-                        const updated = [...prev, ...newMessages];
-                        // Re-ordenar por si acaso
-                        updated.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-                        messagesRef.current = updated;
-                        return updated;
+                            if (tempIndex !== -1) {
+                                // ENCONTRAMOS EL MATCH -> Reemplazar
+                                currentMsgs[tempIndex] = remoteMsg;
+                                hasChanges = true;
+                                seenIds.add(remoteMsg.id); // Evitar procesar dos veces si polling trae duplicados
+                                return;
+                            }
+                        }
+
+                        // 3. Si no es match, agregar como nuevo
+                        currentMsgs.push(remoteMsg);
+                        hasChanges = true;
+                        seenIds.add(remoteMsg.id);
+
+                        // Si es respuesta del bot, apagar typing
+                        if (remoteMsg.role !== 'user') {
+                            setIsTyping(false);
+                        }
                     });
-                }
+
+                    if (!hasChanges) return prev; // Sin cambios, no re-renderizar
+
+                    // Re-ordenar final
+                    currentMsgs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+                    messagesRef.current = currentMsgs;
+                    return currentMsgs;
+                });
             }
 
         }, POLLING_INTERVAL);
