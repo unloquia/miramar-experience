@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "@/components/ui/sonner";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -54,6 +55,11 @@ export default function RootLayout({
         {children}
         <Toaster position="top-right" richColors />
         <SpeedInsights />
+        <ChatWidget
+          token={process.env.NEXT_PUBLIC_CHAT_TOKEN || "CLT-P3Wz5MH1JJwimRs6jfxT_NWJtHyiZR6CQaTQ1oMk398"}
+          primaryColor="#0f172a"
+          botName="Asistente Miramar"
+        />
       </body>
     </html>
   );
