@@ -97,11 +97,31 @@ export async function syncToGoogleSheet(data: Record<string, any>[], config: She
     const range = `${sheetName}!A1`;
 
     try {
-        // 1. Clear existing content
-        await sheets.spreadsheets.values.clear({
-            spreadsheetId: config.spreadsheetId,
-            range: sheetName,
-        });
+        // 1. Clear existing content (Try/Catch to handle missing sheet)
+        try {
+            await sheets.spreadsheets.values.clear({
+                spreadsheetId: config.spreadsheetId,
+                range: sheetName,
+            });
+        } catch (clearError: any) {
+            // If sheet doesn't exist, create it
+            if (clearError.message && (clearError.message.includes('Unable to parse range') || clearError.message.includes('Invalid value for'))) {
+                console.log(`Sheet '${sheetName}' not found. Creating it...`);
+                await sheets.spreadsheets.batchUpdate({
+                    spreadsheetId: config.spreadsheetId,
+                    requestBody: {
+                        requests: [{
+                            addSheet: {
+                                properties: { title: sheetName }
+                            }
+                        }]
+                    }
+                });
+            } else {
+                // If it's another error (e.g. Auth), rethrow
+                throw clearError;
+            }
+        }
 
         // 2. Write headers + data
         const values = [headers, ...rows];
