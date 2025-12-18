@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function IntegrationsPage() {
     const sheetId = await getSystemSetting('google_sheet_id');
-    const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'miramar-sync-bot@miramar-bot-sync.iam.gserviceaccount.com';
 
     return (
         <div className="max-w-4xl space-y-6">
