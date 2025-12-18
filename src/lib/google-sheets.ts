@@ -13,26 +13,45 @@ interface GoogleCredentials {
 }
 
 /**
+ * Helper to clean and format Private Key
+ * Handles \\n literals (from JSON), redundant quotes, and ensures PEM format.
+ */
+function formatPrivateKey(key: string | undefined): string | undefined {
+    if (!key) return undefined;
+
+    // 1. Replace literal "\n" characters with real newlines
+    let formatted = key.replace(/\\n/g, '\n');
+
+    // 2. Remove surrounding double quotes if user pasted JSON string value literally
+    if (formatted.startsWith('"') && formatted.endsWith('"')) {
+        formatted = formatted.slice(1, -1);
+    }
+
+    return formatted;
+}
+
+/**
  * Initialize Google Auth Client
  */
 function getAuthClient(credentials?: GoogleCredentials) {
-    // 1. Try explicit credentials
+    // 1. Try explicit credentials (cleaned)
     let email = credentials?.client_email;
-    let privateKey = credentials?.private_key;
+    let privateKey = formatPrivateKey(credentials?.private_key);
 
-    // 2. Fallback to Env Vars (with hardcoded email fallback for safety)
+    // 2. Fallback to Env Vars (cleaned)
     if (!email) {
         email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'miramar-sync-bot@miramar-bot-sync.iam.gserviceaccount.com';
     }
     if (!privateKey) {
-        privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+        privateKey = formatPrivateKey(process.env.GOOGLE_PRIVATE_KEY);
     }
 
     // Debug Log (Masked)
     console.log('🤖 Auth Check:', {
         hasEmail: !!email,
         hasKey: !!privateKey,
-        keyStart: privateKey?.substring(0, 10)
+        keyStart: privateKey?.substring(0, 10),
+        isPem: privateKey?.includes('-----BEGIN PRIVATE KEY-----')
     });
 
     if (!email || !privateKey) {
