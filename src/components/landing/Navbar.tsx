@@ -11,10 +11,11 @@ import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-    { label: 'Playas', href: '#playas' },
-    { label: 'Gastronomía', href: '#gastronomia' },
-    { label: 'Hotelería', href: '#hoteleria' },
-    { label: 'Eventos', href: '#eventos' },
+    { label: 'Guía', href: '/guia' },
+    { label: 'Playas', href: '/#playas' },
+    { label: 'Gastronomía', href: '/#gastronomia' },
+    { label: 'Hotelería', href: '/#hoteleria' },
+    { label: 'Eventos', href: '/#eventos' },
 ];
 
 export function Navbar() {

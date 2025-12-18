@@ -216,3 +216,55 @@ export async function getPlacesForMap(): Promise<Ad[]> {
         return [];
     }
 }
+
+/**
+ * Get ALL places for the Directory / Guide page
+ * Supports filtering by category and search query
+ */
+export async function getAllPlaces(options?: { category?: string; query?: string }): Promise<Ad[]> {
+    if (!isSupabaseConfigured()) return [];
+
+    try {
+        const supabase = createPublicSupabaseClient();
+        let query = supabase
+            .from('ads')
+            .select('*')
+            .eq('is_active', true)
+            .or(`expiration_date.gt.${new Date().toISOString()},is_permanent.eq.true`)
+            // Sort: Hero first, then Featured, then Standard
+            // Note: Enum order in Supabase might vary, but usually strings are sorted alphabetically if not custom.
+            // Ideally we'd map ENUM to INT, but here we rely on Supabase returning them.
+            // 'hero' < 'standard' alphabetically? No. 'featured' < 'hero' < 'standard'. 
+            // We might need client-side sort if SQL sort isn't perfect, but let's try.
+            .order('priority', { ascending: false });
+
+        if (options?.category) {
+            query = query.eq('category', options.category);
+        }
+
+        if (options?.query) {
+            query = query.ilike('business_name', `%${options.query}%`);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error('Error fetching directory places:', error);
+            return [];
+        }
+
+        // Manual sort by Tier Importance to guarantee Business Logic
+        const tierWeight = { hero: 3, featured: 2, standard: 1 };
+        const sorted = (data as Ad[]).sort((a, b) => {
+            const weightA = tierWeight[a.tier] || 0;
+            const weightB = tierWeight[b.tier] || 0;
+            if (weightA !== weightB) return weightB - weightA; // Higher weight first
+            return (b.priority || 0) - (a.priority || 0);
+        });
+
+        return sorted;
+    } catch (error) {
+        console.error('Error in getAllPlaces:', error);
+        return [];
+    }
+}
