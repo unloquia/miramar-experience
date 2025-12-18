@@ -9,6 +9,26 @@ export type AdTier = 'hero' | 'featured' | 'standard';
 // Ad Category Enum
 export type AdCategory = 'gastronomia' | 'hoteleria' | 'shopping' | 'aventura' | 'nocturna';
 
+// New Phase 2 Types
+export type PriceRange = 'cheap' | 'moderate' | 'expensive' | 'luxury';
+
+export interface DaySchedule {
+    open: string;  // "09:00"
+    close: string; // "20:00"
+    closed: boolean;
+}
+
+export interface OpeningHours {
+    monday?: DaySchedule;
+    tuesday?: DaySchedule;
+    wednesday?: DaySchedule;
+    thursday?: DaySchedule;
+    friday?: DaySchedule;
+    saturday?: DaySchedule;
+    sunday?: DaySchedule;
+    note?: string; // "Feriados consultar"
+}
+
 // Main Ad Type (also represents a Place)
 export interface Ad {
     id: string;
@@ -23,13 +43,21 @@ export interface Ad {
     image_url: string;
     gallery_urls: string[];
 
-    // Contact & Links
-    redirect_url: string | null;
+    // Contact & Links (Phase 2 Enrichment)
+    redirect_url: string | null; // Legacy main link
+    phone: string | null;
+    instagram_username: string | null;
+    website_url: string | null;
 
     // Classification
     tier: AdTier;
     category: AdCategory;
     priority: number;
+
+    // Phase 2: Metadata
+    price_range: PriceRange | null;
+    features: string[]; // ['wifi', 'pet_friendly']
+    opening_hours: OpeningHours | null;
 
     // Geolocation
     lat: number | null;
@@ -51,9 +79,21 @@ export interface CreateAdInput {
     image_url: string;
     gallery_urls?: string[];
     redirect_url?: string | null;
+
+    // New Contact
+    phone?: string | null;
+    instagram_username?: string | null;
+    website_url?: string | null;
+
     tier: AdTier;
     category: AdCategory;
     priority?: number;
+
+    // New Metadata
+    price_range?: PriceRange | null;
+    features?: string[];
+    opening_hours?: OpeningHours | null;
+
     lat?: number | null;
     lng?: number | null;
     address?: string | null;
@@ -81,9 +121,9 @@ export interface Database {
     public: {
         Tables: {
             ads: {
-                Row: Ad;
-                Insert: CreateAdInput;
-                Update: Partial<CreateAdInput>;
+                Row: Ad; // Now includes new fields
+                Insert: CreateAdInput; // Now includes new fields
+                Update: Partial<CreateAdInput>; // Now includes new fields
             },
             analytics_events: {
                 Row: {

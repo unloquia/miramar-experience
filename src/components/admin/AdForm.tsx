@@ -1,6 +1,6 @@
 /**
  * Ad Form Component
- * Complete form for creating/editing ads with image upload
+ * Complete form for creating/editing ads with image upload and gallery support
  */
 
 'use client';
@@ -22,7 +22,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarIcon, Upload, X, Loader2 } from 'lucide-react';
+import { CalendarIcon, Upload, X, Loader2, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -31,7 +31,18 @@ import { createAd, updateAd, uploadAdImage } from '@/lib/actions/ads';
 import { tierInfo, categoryInfo, type CreateAdFormData } from '@/lib/schemas';
 import { LocationPicker } from './LocationPicker';
 import { Switch } from '@/components/ui/switch';
-import type { Ad, AdTier, AdCategory } from '@/types/database';
+import type { Ad, AdTier, AdCategory, PriceRange, OpeningHours } from '@/types/database';
+
+// Helper for Features
+const AVAILABLE_FEATURES = [
+    { id: 'wifi', label: 'WiFi Gratis', icon: '📶' },
+    { id: 'pet_friendly', label: 'Pet Friendly', icon: '🐾' },
+    { id: 'cards', label: 'Acepta Tarjeta', icon: '💳' },
+    { id: 'outdoor', label: 'Aire Libre', icon: '🌳' },
+    { id: 'ac', label: 'Aire Acondicionado', icon: '❄️' },
+    { id: 'delivery', label: 'Delivery', icon: '🛵' },
+    { id: 'parking', label: 'Estacionamiento', icon: '🚗' },
+];
 
 interface AdFormProps {
     initialData?: Ad;
@@ -45,6 +56,12 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
     const [businessName, setBusinessName] = useState(initialData?.business_name || '');
     const [description, setDescription] = useState(initialData?.description || '');
     const [redirectUrl, setRedirectUrl] = useState(initialData?.redirect_url || '');
+
+    // Phase 2: enriched contact
+    const [phone, setPhone] = useState(initialData?.phone || '');
+    const [instagram, setInstagram] = useState(initialData?.instagram_username || '');
+    const [website, setWebsite] = useState(initialData?.website_url || '');
+
     const [tier, setTier] = useState<AdTier>(initialData?.tier || 'standard');
     const [category, setCategory] = useState<AdCategory | ''>(initialData?.category || '');
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(
@@ -52,6 +69,10 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
     );
     const [priority, setPriority] = useState(initialData?.priority || 0);
     const [longDescription, setLongDescription] = useState(initialData?.long_description || '');
+
+    // Phase 2: Metadata
+    const [priceRange, setPriceRange] = useState<PriceRange | ''>(initialData?.price_range || '');
+    const [features, setFeatures] = useState<string[]>(initialData?.features || []);
 
     // Geolocation state
     const [lat, setLat] = useState<number | null>(initialData?.lat || null);
@@ -64,6 +85,10 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
     const [imageUrl, setImageUrl] = useState(initialData?.image_url || '');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState(initialData?.image_url || '');
+
+    // Gallery state
+    const [galleryFiles, setGalleryFiles] = useState<{ file: File; preview: string }[]>([]);
+    const [existingGalleryUrls, setExistingGalleryUrls] = useState<string[]>(initialData?.gallery_urls || []);
     const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     // Submit state
@@ -74,13 +99,11 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Validate size (3MB max)
         if (file.size > 3 * 1024 * 1024) {
             toast.error('La imagen no puede exceder 3MB');
             return;
         }
 
-        // Validate type
         if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
             toast.error('Formato no válido. Usa JPG, PNG o WebP');
             return;
@@ -90,6 +113,31 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
         setImagePreview(URL.createObjectURL(file));
     };
 
+    // Handle gallery selection
+    const handleGallerySelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        const validFiles: { file: File; preview: string }[] = [];
+
+        files.forEach(file => {
+            if (file.size > 3 * 1024 * 1024) {
+                toast.error(`Imagen ${file.name} ignorada (muy grande)`);
+                return;
+            }
+            if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                toast.error(`Imagen ${file.name} ignorada (formato invalido)`);
+                return;
+            }
+            validFiles.push({
+                file,
+                preview: URL.createObjectURL(file)
+            });
+        });
+
+        setGalleryFiles(prev => [...prev, ...validFiles]);
+    };
+
     // Remove selected image
     const handleRemoveImage = () => {
         setImageFile(null);
@@ -97,27 +145,29 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
         setImageUrl('');
     };
 
-    // Upload image to storage
-    const uploadImage = async (): Promise<string | null> => {
-        if (!imageFile) return imageUrl || null;
+    const removeGalleryFile = (index: number) => {
+        setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+    };
 
-        setIsUploadingImage(true);
+    const removeExistingGalleryUrl = (urlToRemove: string) => {
+        setExistingGalleryUrls(prev => prev.filter(url => url !== urlToRemove));
+    };
+
+    // Upload image to storage
+    const uploadImage = async (fileToUpload?: File): Promise<string | null> => {
+        const file = fileToUpload || imageFile;
+        // If no file to upload, return existing URL if handling main image
+        if (!file) return imageUrl || null;
 
         const formData = new FormData();
-        formData.append('file', imageFile);
+        formData.append('file', file);
 
         const result = await uploadAdImage(formData);
 
-        setIsUploadingImage(false);
+        if (result.success) return result.data;
 
-        if (result.success) {
-            return result.data;
-        } else {
-            toast.error('Error al subir imagen', {
-                description: result.error,
-            });
-            return null;
-        }
+        toast.error(`Error al subir ${file.name}`, { description: result.error });
+        return null;
     };
 
     // Handle form submission
@@ -141,60 +191,91 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
         }
 
         if (!imageFile && !imageUrl) {
-            toast.error('Debes subir una imagen');
+            toast.error('Debes subir una imagen principal');
             return;
         }
 
         setIsSubmitting(true);
+        setIsUploadingImage(true);
 
-        // Upload image if new file selected
-        const finalImageUrl = await uploadImage();
+        try {
+            // 1. Upload Main Image (if changed or new)
+            // uploadImage() uses imageFile from state if no arg passed, returns existing imageUrl if no file
+            const finalImageUrl = await uploadImage();
 
-        if (!finalImageUrl) {
+            if (!finalImageUrl) {
+                throw new Error('Error al procesar imagen principal');
+            }
+
+            // 2. Upload New Gallery Images
+            const newGalleryUrls: string[] = [];
+            for (const item of galleryFiles) {
+                const uploaded = await uploadImage(item.file);
+                if (uploaded) newGalleryUrls.push(uploaded);
+            }
+
+            // Combine existing + new
+            const finalGalleryUrls = [...existingGalleryUrls, ...newGalleryUrls];
+
+            // Prepare form data
+            const formData = {
+                business_name: businessName.trim(),
+                description: description.trim() || null,
+                long_description: longDescription.trim() || null,
+                image_url: finalImageUrl,
+                gallery_urls: finalGalleryUrls, // Updated Gallery
+                redirect_url: redirectUrl.trim() || null,
+
+                // Phase 2 New Fields
+                phone: phone.trim() || null,
+                instagram_username: instagram.trim().replace('@', '') || null,
+                website_url: website.trim() || null,
+
+                tier,
+                category: category as AdCategory,
+                priority,
+
+                // Phase 2 Metadata
+                price_range: priceRange || null,
+                features: features,
+                opening_hours: null,
+
+                lat,
+                lng,
+                address: address.trim() || null,
+                show_on_map: showOnMap,
+                expiration_date: expirationDate.toISOString(),
+                is_active: initialData?.is_active ?? true,
+                is_permanent: isPermanent,
+            };
+
+            // Create or Update ad
+            let result;
+            if (isEditing && initialData) {
+                result = await updateAd({
+                    id: initialData.id,
+                    ...formData,
+                } as any);
+            } else {
+                result = await createAd(formData as any);
+            }
+
+            if (result.success) {
+                toast.success(isEditing ? 'Anuncio actualizado' : 'Anuncio creado exitosamente');
+                router.push('/admin/ads');
+            } else {
+                toast.error(isEditing ? 'Error al actualizar' : 'Error al crear anuncio', {
+                    description: result.error,
+                });
+            }
+
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.message || 'Error procesando formulario');
+        } finally {
             setIsSubmitting(false);
-            return;
+            setIsUploadingImage(false);
         }
-
-        // Prepare form data
-        const formData = {
-            business_name: businessName.trim(),
-            description: description.trim() || null,
-            long_description: longDescription.trim() || null,
-            image_url: finalImageUrl,
-            redirect_url: redirectUrl.trim() || null,
-            tier,
-            category: category as AdCategory,
-            priority,
-            lat,
-            lng,
-            address: address.trim() || null,
-            show_on_map: showOnMap,
-            expiration_date: expirationDate.toISOString(),
-            is_active: initialData?.is_active ?? true,
-            is_permanent: isPermanent,
-        };
-
-        // Create or Update ad
-        let result;
-        if (isEditing && initialData) {
-            result = await updateAd({
-                id: initialData.id,
-                ...formData,
-            });
-        } else {
-            result = await createAd(formData as CreateAdFormData);
-        }
-
-        if (result.success) {
-            toast.success(isEditing ? 'Anuncio actualizado' : 'Anuncio creado exitosamente');
-            router.push('/admin/ads');
-        } else {
-            toast.error(isEditing ? 'Error al actualizar' : 'Error al crear anuncio', {
-                description: result.error,
-            });
-        }
-
-        setIsSubmitting(false);
     };
 
     return (
@@ -202,45 +283,101 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
             {/* Image Upload */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Imagen del Anuncio</CardTitle>
+                    <CardTitle>Imágenes</CardTitle>
                     <CardDescription>
-                        Sube una imagen atractiva. Máximo 3MB. Formatos: JPG, PNG, WebP
+                        Foto de portada y galería
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {imagePreview ? (
-                        <div className="relative">
-                            <div
-                                className="w-full h-64 rounded-lg bg-cover bg-center"
-                                style={{ backgroundImage: `url('${imagePreview}')` }}
-                            />
-                            <button
-                                type="button"
-                                onClick={handleRemoveImage}
-                                className="absolute top-2 right-2 p-2 bg-destructive text-destructive-foreground rounded-full hover:opacity-90"
-                            >
-                                <X className="h-4 w-4" />
-                            </button>
-                        </div>
-                    ) : (
-                        <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                                <p className="mb-2 text-sm text-muted-foreground">
-                                    <span className="font-semibold">Click para subir</span> o arrastra y suelta
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                    JPG, PNG o WebP (máx. 3MB)
-                                </p>
+                <CardContent className="space-y-6">
+                    {/* Main Image */}
+                    <div>
+                        <Label className="mb-2 block font-medium">Foto de Portada *</Label>
+                        {imagePreview ? (
+                            <div className="relative">
+                                <div
+                                    className="w-full h-64 rounded-lg bg-cover bg-center border"
+                                    style={{ backgroundImage: `url('${imagePreview}')` }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveImage}
+                                    className="absolute top-2 right-2 p-2 bg-destructive text-destructive-foreground rounded-full hover:opacity-90 shadow-sm"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                                <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">Portada</div>
                             </div>
-                            <input
-                                type="file"
-                                className="hidden"
-                                accept="image/jpeg,image/png,image/webp"
-                                onChange={handleImageSelect}
-                            />
-                        </label>
-                    )}
+                        ) : (
+                            <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <Upload className="h-10 w-10 text-muted-foreground mb-3" />
+                                    <p className="mb-2 text-sm text-muted-foreground">
+                                        <span className="font-semibold">Subir Portada</span>
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">JPG, PNG, WebP (máx. 3MB)</p>
+                                </div>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={handleImageSelect}
+                                />
+                            </label>
+                        )}
+                    </div>
+
+                    <div className="border-t"></div>
+
+                    {/* Gallery Grid */}
+                    <div>
+                        <Label className="mb-2 block font-medium">Galería de Fotos</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            {/* Existing Photos */}
+                            {existingGalleryUrls.map((url, idx) => (
+                                <div key={`old-${idx}`} className="aspect-square relative rounded-md overflow-hidden bg-muted group border">
+                                    <img src={url} alt="Galería" className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeExistingGalleryUrl(url)}
+                                        className="absolute top-1 right-1 p-1 bg-destructive/90 text-white rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {/* New Photos Pending Upload */}
+                            {galleryFiles.map((item, idx) => (
+                                <div key={`new-${idx}`} className="aspect-square relative rounded-md overflow-hidden bg-muted border border-blue-500/50">
+                                    <img src={item.preview} alt="Nueva" className="w-full h-full object-cover opacity-80" />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeGalleryFile(idx)}
+                                        className="absolute top-1 right-1 p-1 bg-destructive/90 text-white rounded-full"
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                    <div className="absolute bottom-0 left-0 right-0 bg-blue-600/80 text-[10px] text-white text-center py-0.5">Pendiente</div>
+                                </div>
+                            ))}
+
+                            {/* Add Button */}
+                            <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border rounded-md cursor-pointer hover:bg-muted/50 transition-colors">
+                                <Plus className="h-6 w-6 text-muted-foreground mb-1" />
+                                <span className="text-xs text-muted-foreground">Agregar</span>
+                                <input
+                                    type="file"
+                                    multiple
+                                    className="hidden"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={handleGallerySelect}
+                                />
+                            </label>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Puedes subir varias fotos a la vez. Se guardarán al darle CLICK a 'Guardar Cambios'.
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -293,7 +430,7 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="redirectUrl">URL de Redirección (WhatsApp o Web)</Label>
+                        <Label htmlFor="redirectUrl">URL de Redirección (Legacy/Opcional)</Label>
                         <Input
                             id="redirectUrl"
                             placeholder="2261234567 o https://..."
@@ -303,6 +440,98 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
                         <p className="text-xs text-muted-foreground">
                             💡 Podés poner solo el número de teléfono y se convierte automáticamente a WhatsApp
                         </p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Extended Info (Phase 2) */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Detalles Adicionales</CardTitle>
+                    <CardDescription>Enriquece el perfil para mejorar el SEO y conversión</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+
+                    {/* Contacto Directo */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="phone">Teléfono / WhatsApp</Label>
+                            <Input
+                                id="phone"
+                                placeholder="+54 9 2291..."
+                                value={phone}
+                                onChange={e => setPhone(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="instagram">Instagram (sin @)</Label>
+                            <div className="flex">
+                                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-sm">@</span>
+                                <Input
+                                    id="instagram"
+                                    placeholder="usuario"
+                                    className="rounded-l-none"
+                                    value={instagram}
+                                    onChange={e => setInstagram(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="website">Sitio Web</Label>
+                            <Input
+                                id="website"
+                                placeholder="https://..."
+                                value={website}
+                                onChange={e => setWebsite(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="border-t pt-2"></div>
+
+                    {/* Metadata: Price & Features */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label>Rango de Precios</Label>
+                            <Select value={priceRange} onValueChange={(v) => setPriceRange(v as PriceRange)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Seleccionar..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="cheap">Barato ($)</SelectItem>
+                                    <SelectItem value="moderate">Moderado ($$)</SelectItem>
+                                    <SelectItem value="expensive">Caro ($$$)</SelectItem>
+                                    <SelectItem value="luxury">Lujo ($$$$)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="mb-2 block">Comodidades (Amenities)</Label>
+                            <div className="grid grid-cols-1 gap-2 border rounded-lg p-3 max-h-48 overflow-y-auto">
+                                {AVAILABLE_FEATURES.map(feat => {
+                                    const isChecked = features.includes(feat.id);
+                                    return (
+                                        <div key={feat.id} className="flex items-center space-x-3 p-1 hover:bg-muted/50 rounded transition-colors">
+                                            <Switch
+                                                id={`feat-${feat.id}`}
+                                                checked={isChecked}
+                                                onCheckedChange={(checked) => {
+                                                    if (checked) {
+                                                        setFeatures(prev => [...prev, feat.id]);
+                                                    } else {
+                                                        setFeatures(prev => prev.filter(f => f !== feat.id));
+                                                    }
+                                                }}
+                                            />
+                                            <label htmlFor={`feat-${feat.id}`} className="cursor-pointer select-none text-sm font-medium flex items-center gap-2">
+                                                <span>{feat.icon}</span> {feat.label}
+                                            </label>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -485,7 +714,7 @@ export function AdForm({ initialData, isEditing = false }: AdFormProps) {
                     {isSubmitting ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {isUploadingImage ? 'Subiendo imagen...' : 'Guardando...'}
+                            {isUploadingImage ? 'Subiendo imágenes...' : 'Guardando...'}
                         </>
                     ) : (
                         isEditing ? 'Guardar Cambios' : 'Crear Anuncio'
