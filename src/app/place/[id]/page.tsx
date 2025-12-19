@@ -17,6 +17,8 @@ const FEATURES_MAP: Record<string, { label: string; icon: string }> = {
     wifi: { label: 'WiFi Gratis', icon: '📶' },
     pet_friendly: { label: 'Pet Friendly', icon: '🐾' },
     cards: { label: 'Acepta Tarjeta', icon: '💳' },
+    mercadopago: { label: 'Mercado Pago', icon: '📱' },
+    cash: { label: 'Solo Efectivo', icon: '💵' },
     outdoor: { label: 'Aire Libre', icon: '🌳' },
     ac: { label: 'Aire Acondicionado', icon: '❄️' },
     delivery: { label: 'Delivery', icon: '🛵' },

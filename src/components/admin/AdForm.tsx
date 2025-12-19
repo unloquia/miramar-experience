@@ -38,6 +38,8 @@ const AVAILABLE_FEATURES = [
     { id: 'wifi', label: 'WiFi Gratis', icon: '📶' },
     { id: 'pet_friendly', label: 'Pet Friendly', icon: '🐾' },
     { id: 'cards', label: 'Acepta Tarjeta', icon: '💳' },
+    { id: 'mercadopago', label: 'Mercado Pago', icon: '📱' },
+    { id: 'cash', label: 'Solo Efectivo', icon: '💵' },
     { id: 'outdoor', label: 'Aire Libre', icon: '🌳' },
     { id: 'ac', label: 'Aire Acondicionado', icon: '❄️' },
     { id: 'delivery', label: 'Delivery', icon: '🛵' },
