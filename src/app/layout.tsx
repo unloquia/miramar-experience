@@ -69,7 +69,7 @@ export default function RootLayout({
         <Toaster position="top-right" richColors />
         <SpeedInsights />
         <ChatWidget
-          token={process.env.NEXT_PUBLIC_CHAT_TOKEN || "CLT-P3Wz5MH1JJwimRs6jfxT_NWJtHyiZR6CQaTQ1oMk398"}
+          token={process.env.NEXT_PUBLIC_CHAT_TOKEN || "CLT-36HffA-AyrklMwtiS6_1sg-usaJpSQ3nQof9AsbabQpiw"}
           primaryColor="#0f172a"
           botName="Asistente Miramar"
         />

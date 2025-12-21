@@ -169,16 +169,29 @@ export async function getAdsByCategory(category: string): Promise<Ad[]> {
             .select('*')
             .eq('category', category)
             .eq('is_active', true)
-            .gt('expiration_date', new Date().toISOString())
-            .order('tier', { ascending: true })
-            .order('priority', { ascending: false });
+            .gt('expiration_date', new Date().toISOString());
+        // Removemos el order SQL porque el alfabetico de tiers (Featured < Hero) es incorrecto para negocio
 
         if (error) {
             console.error('Error fetching category ads:', error);
             return [];
         }
 
-        return data as Ad[];
+        // Manual sort by Tier Importance (Igual que en getAllPlaces)
+        const tierWeight = { hero: 3, featured: 2, standard: 1 };
+        const sorted = (data as Ad[]).sort((a, b) => {
+            // 1. Tier Weight
+            const weightA = tierWeight[a.tier] || 0;
+            const weightB = tierWeight[b.tier] || 0;
+            if (weightA !== weightB) return weightB - weightA;
+
+            // 2. Priority Score (0-100)
+            const priorityA = a.priority ?? 0;
+            const priorityB = b.priority ?? 0;
+            return priorityB - priorityA;
+        });
+
+        return sorted;
     } catch (error) {
         console.error('Error in getAdsByCategory:', error);
         return [];

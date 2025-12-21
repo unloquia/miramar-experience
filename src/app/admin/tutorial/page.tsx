@@ -1,6 +1,6 @@
 /**
- * Admin Tutorial/Help Page
- * Complete guide for the admin on how to use the system
+ * Admin Tutorial/Help Page - Updated for Phase 2
+ * Complete guide for the admin on how to use the enriched system
  */
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,12 +15,13 @@ import {
     Star,
     Grid3X3,
     Layers,
-    Calendar,
     MessageCircle,
     AlertTriangle,
     CheckCircle2,
     Info,
-    ArrowRight
+    Smartphone,
+    MapPin,
+    Wifi
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -32,10 +33,10 @@ export default function TutorialPage() {
             <div className="border-b border-border pb-6">
                 <div className="flex items-center gap-3 mb-2">
                     <BookOpen className="h-8 w-8 text-primary" />
-                    <h1 className="text-3xl font-bold">Guía de Uso - Panel de Administración</h1>
+                    <h1 className="text-3xl font-bold">Guía de Uso 2.0 - Panel de Administración</h1>
                 </div>
                 <p className="text-muted-foreground text-lg">
-                    Todo lo que necesitás saber para gestionar los anuncios de Miramar Experience.
+                    Todo lo que necesitás saber para gestionar los anuncios de Miramar Experience con las nuevas funciones.
                 </p>
             </div>
 
@@ -57,13 +58,13 @@ export default function TutorialPage() {
                             <ImagePlus className="h-5 w-5 mx-auto mb-1 text-primary" />
                             <span className="text-sm font-medium">Crear Anuncio</span>
                         </a>
-                        <a href="#gestionar" className="p-3 bg-card rounded-lg hover:bg-muted transition-colors text-center">
-                            <Edit className="h-5 w-5 mx-auto mb-1 text-primary" />
-                            <span className="text-sm font-medium">Gestionar</span>
-                        </a>
                         <a href="#tiers" className="p-3 bg-card rounded-lg hover:bg-muted transition-colors text-center">
                             <Layers className="h-5 w-5 mx-auto mb-1 text-primary" />
-                            <span className="text-sm font-medium">Niveles</span>
+                            <span className="text-sm font-medium">Niveles & Prioridad</span>
+                        </a>
+                        <a href="#features" className="p-3 bg-card rounded-lg hover:bg-muted transition-colors text-center">
+                            <Wifi className="h-5 w-5 mx-auto mb-1 text-primary" />
+                            <span className="text-sm font-medium">Detalles & Pagos</span>
                         </a>
                     </div>
                 </CardContent>
@@ -104,423 +105,178 @@ export default function TutorialPage() {
                 </Card>
             </section>
 
-            {/* Section 2: Creating Ads */}
+            {/* Section 2: Creating Ads (Updated for Tabs) */}
             <section id="crear" className="scroll-mt-20">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <ImagePlus className="h-6 w-6 text-primary" />
-                            Crear Nuevo Anuncio (/admin/ads/new)
+                            Crear Nuevo Anuncio (Nuevo Flujo de Pestañas)
                         </CardTitle>
                         <CardDescription>
-                            Paso a paso para agregar un nuevo comercio o negocio a la plataforma.
+                            El formulario ahora está dividido en 4 pestañas para facilitar la carga.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {/* Step 1 */}
+
+                        {/* Tab 1: Info */}
                         <div className="flex gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                                1
+                            <div className="flex-shrink-0 w-8 h-8 bg-muted text-foreground border rounded-full flex items-center justify-center font-bold">
+                                📋
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-semibold">Subir Imagen</h4>
+                                <h4 className="font-semibold">Pestaña 1: Información Básica</h4>
                                 <p className="text-sm text-muted-foreground mt-1">
-                                    Seleccioná una imagen atractiva del negocio. La imagen es lo primero que verán los usuarios.
+                                    Acá definís <strong>quién es</strong> y <strong>qué plan tiene</strong>.
                                 </p>
-                                <div className="mt-2 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg">
-                                    <p className="text-sm text-amber-800 dark:text-amber-200">
-                                        <strong>📸 Requisitos:</strong> JPG, PNG o WebP. Máximo 3MB. Se recomienda 1200x800px para mejor calidad.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Step 2 */}
-                        <div className="flex gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                                2
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="font-semibold">Información y Descripción</h4>
-                                <ul className="text-sm text-muted-foreground mt-1 space-y-1">
-                                    <li>• <strong>Nombre:</strong> Nombre comercial (ej: "Hotel Miramar")</li>
-                                    <li>• <strong>Descripción Corta:</strong> Texto breve para la tarjeta en la lista (máx 140 cars).</li>
-                                    <li>• <strong>Descripción Larga:</strong> Texto completo para la página de detalle del comercio. Acá podés contar toda la historia, servicios, menú, etc.</li>
-                                    <li>• <strong>URL:</strong> Link de WhatsApp o sitio web.</li>
-                                </ul>
-                                <div className="mt-2 p-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg">
-                                    <p className="text-sm text-green-800 dark:text-green-200">
-                                        <strong>💡 Tip WhatsApp:</strong> Podés poner solo el número (ej: 2261234567) y el sistema lo convierte automáticamente a link de WhatsApp.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Step 3 */}
-                        <div className="flex gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                                3
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="font-semibold">Ubicación en el Mapa 🗺️</h4>
-                                <p className="text-sm text-muted-foreground mt-1 mb-2">
-                                    Es fundamental para que los turistas encuentren el local.
-                                </p>
-                                <ul className="text-sm text-muted-foreground space-y-2">
-                                    <li className="flex gap-2">
-                                        <span className="text-primary">📍</span>
-                                        <span><strong>Seleccionar:</strong> Hacé clic en el mapa para poner el pin exacto o usá el buscador de direcciones.</span>
-                                    </li>
-                                    <li className="flex gap-2">
-                                        <span className="text-primary">👁️</span>
-                                        <span><strong>Mostrar en mapa:</strong> Activá este switch para que aparezca en el mapa interactivo de la home.</span>
-                                    </li>
-                                    <li className="flex gap-2">
-                                        <span className="text-primary">♾️</span>
-                                        <span><strong>Lugar Permanente:</strong> Activá esto si querés que el lugar aparezca en el mapa <strong>para siempre</strong>, aunque no tenga publicidad activa. Ideal para la guía base de comercios.</span>
-                                    </li>
+                                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                                    <li>• <strong>Nombre y Categoría:</strong> Datos esenciales.</li>
+                                    <li>• <strong>Plan (Tier):</strong> Hero, Destacado o Estándar.</li>
+                                    <li>• <strong>Prioridad Inteligente:</strong> Al cambiar el plan, el sistema te sugerirá un número (90, 50, 10). Podés editarlo si querés "desempatar" manualmente.</li>
                                 </ul>
                             </div>
                         </div>
 
-                        {/* Step 4 */}
+                        {/* Tab 2: Media */}
                         <div className="flex gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                                4
+                            <div className="flex-shrink-0 w-8 h-8 bg-muted text-foreground border rounded-full flex items-center justify-center font-bold">
+                                📸
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-semibold">Elegir Nivel (Tier)</h4>
-                                <p className="text-sm text-muted-foreground mt-1 mb-3">
-                                    El nivel determina dónde y cómo se muestra el anuncio en la web.
+                                <h4 className="font-semibold">Pestaña 2: Multimedia (Galería)</h4>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    Ahora podés subir muchas fotos a la vez.
                                 </p>
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2 p-2 border border-amber-300 bg-amber-50 dark:bg-amber-950/30 rounded-lg">
-                                        <Badge className="bg-amber-500">Hero</Badge>
-                                        <span className="text-sm">Carrusel principal - Máxima visibilidad (máx. 5 activos)</span>
+                                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                                    <li>• <strong>Portada:</strong> La imagen principal que sale en los listados. (Obligatoria)</li>
+                                    <li>• <strong>Galería:</strong> Hacé click en "Agregar" y seleccioná múltiples fotos.</li>
+                                    <li>• <strong>Vista Previa:</strong> Podés ver cómo quedan y eliminar las que no te gusten antes de guardar.</li>
+                                </ul>
+                                <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                                    Tip: Las fotos de galería se suben realmente cuando hacés click en "Guardar Cambios" al final.
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Tab 3: Details */}
+                        <div className="flex gap-4">
+                            <div className="flex-shrink-0 w-8 h-8 bg-muted text-foreground border rounded-full flex items-center justify-center font-bold">
+                                ✨
+                            </div>
+                            <div className="flex-1">
+                                <h4 className="font-semibold">Pestaña 3: Detalles y Contacto</h4>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    Enriquece el anuncio para que la gente (y la IA) sepan todo.
+                                </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm text-muted-foreground">
+                                    <div>
+                                        <strong>📞 Contacto:</strong>
+                                        <ul className="list-disc list-inside pl-1">
+                                            <li>Teléfono/WhatsApp</li>
+                                            <li>Instagram (usuario sin @)</li>
+                                            <li>Sitio Web</li>
+                                        </ul>
                                     </div>
-                                    <div className="flex items-center gap-2 p-2 border border-primary/30 bg-primary/5 rounded-lg">
-                                        <Badge className="bg-primary text-primary-foreground">Destacado</Badge>
-                                        <span className="text-sm">Grilla - Tarjeta grande (2 columnas)</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 p-2 border border-slate-300 bg-slate-50 dark:bg-slate-950/30 rounded-lg">
-                                        <Badge variant="secondary">Estándar</Badge>
-                                        <span className="text-sm">Grilla - Tarjeta normal (1 columna)</span>
+                                    <div>
+                                        <strong>🏷️ Metadata:</strong>
+                                        <ul className="list-disc list-inside pl-1">
+                                            <li>Rango de Precios ($ - $$$$)</li>
+                                            <li>Comodidades (WiFi, Aire, etc)</li>
+                                            <li><strong>Medios de Pago</strong> (MercadoPago, Efectivo)</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Step 5 */}
+                        {/* Tab 4: Location */}
                         <div className="flex gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                                5
+                            <div className="flex-shrink-0 w-8 h-8 bg-muted text-foreground border rounded-full flex items-center justify-center font-bold">
+                                📍
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-semibold">Categoría y Vencimiento</h4>
-                                <ul className="text-sm text-muted-foreground mt-1 space-y-1">
-                                    <li>• <strong>Categoría:</strong> Gastronomía, Hotelería, Shopping, Aventura, Vida Nocturna</li>
-                                    <li>• <strong>Fecha de Vencimiento:</strong> Hasta cuándo estará visible el anuncio</li>
+                                <h4 className="font-semibold">Pestaña 4: Ubicación</h4>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    Seleccioná el punto exacto en el mapa.
+                                </p>
+                                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                                    <li>• El usuario podrá usar el botón <strong>"Cómo Llegar"</strong> que abre el GPS directo a este punto.</li>
+                                    <li>• Activá "Mostrar en Mapa" para que aparezca en el mapa general de la home.</li>
                                 </ul>
                             </div>
                         </div>
+
                     </CardContent>
                 </Card>
             </section>
 
-            {/* Section 3: Managing Ads */}
-            <section id="gestionar" className="scroll-mt-20">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Edit className="h-6 w-6 text-primary" />
-                            Gestionar Anuncios (/admin/ads)
-                        </CardTitle>
-                        <CardDescription>
-                            Ver, editar, activar/desactivar y eliminar anuncios existentes.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        {/* Table Info */}
-                        <div className="p-4 bg-muted/50 rounded-lg">
-                            <h4 className="font-semibold mb-3">📋 Tabla de Anuncios</h4>
-                            <p className="text-sm text-muted-foreground mb-3">
-                                Acá verás todos los anuncios ordenados del más nuevo al más viejo. Cada fila muestra:
-                            </p>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-                                <div className="p-2 bg-card rounded">📷 Miniatura</div>
-                                <div className="p-2 bg-card rounded">🏪 Nombre</div>
-                                <div className="p-2 bg-card rounded">⭐ Nivel</div>
-                                <div className="p-2 bg-card rounded">📂 Categoría</div>
-                                <div className="p-2 bg-card rounded">📅 Vencimiento</div>
-                                <div className="p-2 bg-card rounded">✅ Estado</div>
-                            </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="space-y-4">
-                            <h4 className="font-semibold">🔧 Acciones Disponibles</h4>
-
-                            <div className="flex items-start gap-3 p-3 border rounded-lg">
-                                <ToggleLeft className="h-5 w-5 text-green-600 mt-0.5" />
-                                <div>
-                                    <h5 className="font-medium">Activar/Desactivar</h5>
-                                    <p className="text-sm text-muted-foreground">
-                                        Usá el switch para pausar un anuncio sin eliminarlo.
-                                        Al desactivarlo, deja de verse en la web inmediatamente.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3 p-3 border rounded-lg">
-                                <Edit className="h-5 w-5 text-blue-600 mt-0.5" />
-                                <div>
-                                    <h5 className="font-medium">Editar</h5>
-                                    <p className="text-sm text-muted-foreground">
-                                        Modificá cualquier dato: imagen, nombre, descripción, nivel, fecha de vencimiento, etc.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3 p-3 border rounded-lg">
-                                <Trash2 className="h-5 w-5 text-red-600 mt-0.5" />
-                                <div>
-                                    <h5 className="font-medium">Eliminar</h5>
-                                    <p className="text-sm text-muted-foreground">
-                                        Borra el anuncio permanentemente. Se pedirá confirmación antes de eliminar.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Status Badges */}
-                        <div className="p-4 bg-muted/50 rounded-lg">
-                            <h4 className="font-semibold mb-3">🏷️ Estados que podés ver</h4>
-                            <div className="flex flex-wrap gap-3">
-                                <div className="flex items-center gap-2">
-                                    <Badge className="bg-green-500">Activo</Badge>
-                                    <span className="text-sm">Visible en la web</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Badge variant="secondary">Inactivo</Badge>
-                                    <span className="text-sm">Pausado manualmente</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Badge variant="destructive">Vencido</Badge>
-                                    <span className="text-sm">Pasó la fecha de vencimiento</span>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </section>
-
-            {/* Section 4: Tier System */}
+            {/* Section 3: Priority & Tiers */}
             <section id="tiers" className="scroll-mt-20">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Layers className="h-6 w-6 text-primary" />
-                            Sistema de Niveles (Tiers)
+                            Niveles y Prioridad (0-100)
                         </CardTitle>
-                        <CardDescription>
-                            Entendé cómo funciona cada nivel de publicidad.
-                        </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {/* Hero */}
-                        <div className="p-4 border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20 rounded-r-lg">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Star className="h-5 w-5 text-amber-500" />
-                                <h4 className="font-bold text-lg">Hero - Máxima Visibilidad</h4>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Aparece en el carrusel principal (100% del ancho de pantalla)
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Rotación automática cada 5 segundos
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <AlertTriangle className="h-4 w-4 text-amber-500" />
-                                    Máximo 5 anuncios Hero activos al mismo tiempo
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Info className="h-4 w-4 text-blue-500" />
-                                    Ideal para: Hoteles premium, restaurantes principales, eventos destacados
-                                </li>
-                            </ul>
-                        </div>
 
-                        {/* Featured */}
-                        <div className="p-4 border-l-4 border-primary bg-primary/5 rounded-r-lg">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Grid3X3 className="h-5 w-5 text-primary" />
-                                <h4 className="font-bold text-lg">Destacado - Gran Visibilidad</h4>
+                        <div className="p-4 bg-muted/50 rounded-lg border">
+                            <h4 className="font-bold mb-2 flex items-center gap-2">
+                                <Star className="w-5 h-5 text-amber-500" />
+                                ¿Cómo funciona la prioridad?
+                            </h4>
+                            <p className="text-sm text-muted-foreground mb-2">
+                                Es un número del 0 al 100 que decide el orden. <strong>Mayor número = Sale primero.</strong>
+                            </p>
+                            <div className="grid grid-cols-3 gap-2 text-center text-sm mt-3">
+                                <div className="p-2 border rounded bg-amber-100 dark:bg-amber-900/30">
+                                    <div className="font-bold text-amber-700 dark:text-amber-400">HERO</div>
+                                    <div className="text-xs">Prioridad ~90</div>
+                                </div>
+                                <div className="p-2 border rounded bg-blue-100 dark:bg-blue-900/30">
+                                    <div className="font-bold text-blue-700 dark:text-blue-400">DESTACADO</div>
+                                    <div className="text-xs">Prioridad ~50</div>
+                                </div>
+                                <div className="p-2 border rounded bg-slate-100 dark:bg-slate-800">
+                                    <div className="font-bold text-slate-700 dark:text-slate-400">ESTÁNDAR</div>
+                                    <div className="text-xs">Prioridad ~10</div>
+                                </div>
                             </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Tarjeta grande en la grilla (ocupa 2 columnas)
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Muestra descripción completa y botón de acción
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Sin límite de cantidad
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Info className="h-4 w-4 text-blue-500" />
-                                    Ideal para: Comercios importantes, servicios de aventura, locales nocturnos
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Standard */}
-                        <div className="p-4 border-l-4 border-slate-400 bg-slate-50 dark:bg-slate-950/20 rounded-r-lg">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Grid3X3 className="h-5 w-5 text-slate-500" />
-                                <h4 className="font-bold text-lg">Estándar - Visibilidad Normal</h4>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Tarjeta cuadrada en la grilla (1 columna)
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Muestra nombre y categoría
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Sin límite de cantidad
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Info className="h-4 w-4 text-blue-500" />
-                                    Ideal para: Comercios pequeños, nuevos negocios, promos temporales
-                                </li>
-                            </ul>
+                            <p className="text-xs text-muted-foreground mt-3 italic">
+                                * El sistema setea estos números automáticamente cuando elegís el plan, pero podés cambiarlo manualmente (ej: ponerle 95 a un cliente VIP para que salga antes que los de 90).
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
             </section>
 
-            {/* Section 5: Tips & Best Practices */}
-            <section id="tips" className="scroll-mt-20">
+            {/* Section 4: Features & Payment */}
+            <section id="features" className="scroll-mt-20">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <MessageCircle className="h-6 w-6 text-primary" />
-                            Tips y Mejores Prácticas
+                            <Smartphone className="h-6 w-6 text-primary" />
+                            Nuevos Features 2.0
                         </CardTitle>
+                        <CardDescription>
+                            Información que buscan los turistas hoy en día.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 md:grid-cols-2">
-                            <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                                <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">✅ Hacé esto</h4>
-                                <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
-                                    <li>• Usá imágenes de alta calidad y bien iluminadas</li>
-                                    <li>• Escribí descripciones cortas y atractivas</li>
-                                    <li>• Revisá los vencimientos cada semana</li>
-                                    <li>• Rotá los anuncios Hero para dar oportunidad a todos</li>
-                                    <li>• Poné siempre un WhatsApp o link de contacto</li>
-                                </ul>
+                            <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                                <h4 className="font-semibold text-purple-800 dark:text-purple-200 mb-2">💳 Medios de Pago</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Ahora podés indicar explícitamente si aceptan <strong>Mercado Pago</strong>, Tarjetas o solo Efectivo. Esto aparece destacado en la ficha.
+                                </p>
                             </div>
-                            <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-lg">
-                                <h4 className="font-semibold text-red-800 dark:text-red-200 mb-2">❌ Evitá esto</h4>
-                                <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
-                                    <li>• Imágenes borrosas o pixeladas</li>
-                                    <li>• Descripciones con muchos emojis</li>
-                                    <li>• Poner todos los anuncios como "Hero"</li>
-                                    <li>• Dejar anuncios vencidos sin renovar</li>
-                                    <li>• URLs que no funcionan</li>
-                                </ul>
+                            <div className="p-4 bg-pink-50 dark:bg-pink-950/20 rounded-lg">
+                                <h4 className="font-semibold text-pink-800 dark:text-pink-200 mb-2">📸 Galería & Instagram</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    La nueva ficha pública muestra las últimas fotos y un botón directo al Instagram del local. ¡Cargá el usuario sin el @!
+                                </p>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </section>
-
-            {/* Section 6: Metrics & Analytics */}
-            <section id="analytics" className="scroll-mt-20">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-2xl text-primary">trending_up</span>
-                            Métricas y Analytics
-                        </CardTitle>
-                        <CardDescription>
-                            El sistema registra automáticamente cómo interactúan los usuarios con los anuncios.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-100 dark:border-blue-900">
-                            <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">📊 ¿Qué se está midiendo?</h4>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li className="flex items-start gap-2">
-                                    <span className="mt-0.5">•</span>
-                                    <span>
-                                        <strong>Vistas de Detalle:</strong> Cantidad de veces que alguien abre la ficha completa de un lugar.
-                                    </span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="mt-0.5">•</span>
-                                    <span>
-                                        <strong>Clicks en WhatsApp:</strong> Cantidad de veces que alguien toca el botón "Contactar por WhatsApp".
-                                    </span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="mt-0.5">•</span>
-                                    <span>
-                                        <strong>Visitas Web:</strong> Clicks hacia sitios web externos o Instagram.
-                                    </span>
-                                </li>
-                            </ul>
-                            <p className="mt-4 text-xs text-muted-foreground italic">
-                                * Estos datos se guardan internamente para generar reportes futuros de rendimiento para los anunciantes.
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </section>
-
-            {/* FAQ */}
-            <section id="faq" className="scroll-mt-20">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>❓ Preguntas Frecuentes</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="p-4 border rounded-lg">
-                            <h4 className="font-semibold mb-1">¿Qué pasa cuando vence un anuncio?</h4>
-                            <p className="text-sm text-muted-foreground">
-                                Deja de verse en la web automáticamente, pero sigue en el sistema.
-                                Podés renovarlo cambiando la fecha de vencimiento.
-                            </p>
-                        </div>
-                        <div className="p-4 border rounded-lg">
-                            <h4 className="font-semibold mb-1">¿Puedo tener más de 5 anuncios Hero?</h4>
-                            <p className="text-sm text-muted-foreground">
-                                No. El límite es 5 activos para mantener un carousel ágil.
-                                Si necesitás agregar uno nuevo, desactivá uno existente.
-                            </p>
-                        </div>
-                        <div className="p-4 border rounded-lg">
-                            <h4 className="font-semibold mb-1">¿Cómo pongo un link de WhatsApp?</h4>
-                            <p className="text-sm text-muted-foreground">
-                                Simplemente poné el número de teléfono (ej: 2261234567) y el sistema lo convierte
-                                automáticamente al formato correcto de WhatsApp.
-                            </p>
-                        </div>
-                        <div className="p-4 border rounded-lg">
-                            <h4 className="font-semibold mb-1">¿Los cambios se ven inmediatamente?</h4>
-                            <p className="text-sm text-muted-foreground">
-                                Sí. Cualquier cambio (crear, editar, activar, desactivar) se refleja
-                                en la web en menos de 1 segundo.
-                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -528,8 +284,8 @@ export default function TutorialPage() {
 
             {/* Footer */}
             <div className="text-center text-sm text-muted-foreground py-6 border-t">
-                <p>¿Tenés dudas? Contactá al soporte técnico.</p>
-                <p className="mt-1">Miramar Experience © 2024</p>
+                <p>Miramar Experience - Guía Admin Updated</p>
+                <p className="mt-1 opacity-50">Versión Sistema: Fase 2 (Enriched)</p>
             </div>
         </div>
     );
