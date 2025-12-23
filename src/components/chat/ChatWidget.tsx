@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import ReactMarkdown from 'react-markdown';
 
 // Configuración
 const API_BASE = 'https://api.unloquia.com';
@@ -329,7 +330,28 @@ export function ChatWidget({ token, primaryColor = '#4F46E5', botName = 'Asisten
                                         )}
                                         style={!isBot ? { backgroundColor: primaryColor } : {}}
                                     >
-                                        {msg.message}
+                                        <ReactMarkdown
+                                            className="prose dark:prose-invert prose-sm max-w-none break-words text-inherit"
+                                            components={{
+                                                p: ({ children }: any) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                                                ul: ({ children }: any) => <ul className="pl-4 mb-2 list-disc space-y-1">{children}</ul>,
+                                                ol: ({ children }: any) => <ol className="pl-4 mb-2 list-decimal space-y-1">{children}</ol>,
+                                                li: ({ children }: any) => <li>{children}</li>,
+                                                strong: ({ children }: any) => <span className="font-bold text-inherit">{children}</span>,
+                                                a: ({ href, children }: any) => (
+                                                    <a
+                                                        href={href}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="underline opacity-90 hover:opacity-100"
+                                                    >
+                                                        {children}
+                                                    </a>
+                                                ),
+                                            }}
+                                        >
+                                            {msg.message}
+                                        </ReactMarkdown>
                                     </div>
                                 </div>
                             );

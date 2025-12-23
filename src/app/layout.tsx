@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "soydeMiramar | Naturaleza y Paz",
-    description: "Descubre el secreto mejor guardado de la costa atlántica.",
+    description: "Descubre el secreto mejor guardado de la costa atlántica. La guía definitiva de soydeMiramar.",
     type: "website",
     locale: "es_AR",
     siteName: "soydeMiramar",

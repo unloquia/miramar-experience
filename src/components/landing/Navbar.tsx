@@ -11,11 +11,11 @@ import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-    { label: 'Guía', href: '/guia' },
-    { label: 'Playas', href: '/#playas' },
-    { label: 'Gastronomía', href: '/#gastronomia' },
-    { label: 'Hotelería', href: '/#hoteleria' },
-    { label: 'Eventos', href: '/#eventos' },
+    { label: 'Guía Completa', href: '/guia' },
+    { label: 'Gastronomía', href: '/guia?category=gastronomia' },
+    { label: 'Hotelería', href: '/guia?category=hoteleria' },
+    { label: 'Aventura', href: '/guia?category=aventura' },
+    { label: 'Vida Nocturna', href: '/guia?category=nocturna' },
 ];
 
 export function Navbar() {
@@ -59,12 +59,6 @@ export function Navbar() {
                                         </a>
                                     ))}
                                 </div>
-                                <Link
-                                    href="/admin"
-                                    className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-primary hover:bg-primary/90 hover:scale-105 hover:shadow-lg transition-all duration-300 text-primary-foreground text-sm font-bold leading-normal tracking-[0.015em]"
-                                >
-                                    <span className="truncate">Publicita Aquí</span>
-                                </Link>
                             </div>
 
                             {/* Mobile Menu Button */}
@@ -95,13 +89,7 @@ export function Navbar() {
                                 {link.label}
                             </a>
                         ))}
-                        <Link
-                            href="/admin"
-                            onClick={() => setIsOpen(false)}
-                            className="flex items-center justify-center rounded-xl h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold mt-4"
-                        >
-                            Publicita Aquí
-                        </Link>
+
                     </div>
                 </div>
             )}
